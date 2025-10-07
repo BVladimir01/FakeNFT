@@ -1,7 +1,7 @@
 import XCTest
 @testable import iOS_FakeNFT_Extended
 
-final class iOS_FakeNFT_ExtendedTests: XCTestCase {
+final class FakeNFTExtendedTests: XCTestCase {
     func testExample() throws {
     }
 }

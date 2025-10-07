@@ -18,7 +18,7 @@ struct CartItem: Identifiable, Equatable, Hashable {
 		"\(String(format: "%.2f", price)) ETH"
 			.replacingOccurrences(of: ".", with: ",")
 	}
-	
+
 	func hash(into hasher: inout Hasher) {
 		hasher.combine(id)
 	}

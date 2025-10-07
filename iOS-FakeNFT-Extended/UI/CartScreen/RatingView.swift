@@ -23,8 +23,6 @@ struct RatingView: View {
 	}
 }
 
-
-
 #Preview {
 	LightDarkPreviewWrapper {
 		VStack(spacing: 0) {

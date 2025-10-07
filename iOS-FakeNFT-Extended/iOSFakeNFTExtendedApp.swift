@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct iOS_FakeNFT_ExtendedApp: App {
+struct FakeNFTExtendedApp: App {
 	init() {
 		let appearance = UITabBarAppearance()
 		appearance.configureWithDefaultBackground()

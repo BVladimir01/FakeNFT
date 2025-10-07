@@ -48,7 +48,12 @@ struct CartCell: View {
 	LightDarkPreviewWrapper {
 		CartCell(
 			removeAction: { print("remove") },
-			cartItem: .init(image: Image(.mock1), name: "Springfieldowquidwqhhudqwiuhdqwiuhdqiwuhdiwquhdiwq", rating: 4, price: 212324234234234234231.6789)
+			cartItem: .init(
+				image: Image(.mock1),
+				name: "Springfieldowquidwqhhudqwiuhdqwiuhdqiwuhdiwquhdiwq",
+				rating: 4,
+				price: 212324234234234234231.6789
+			)
 		)
 		.border(.ypBlack)
 		CartCell(
