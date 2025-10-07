@@ -11,11 +11,6 @@ struct TabBarView: View {
 					)
 				}
 				.backgroundStyle(.background)
-			let viewModel = CartViewModel(cartService: MockCartServiceImpl())
-			CartView(viewModel: viewModel)
-				.tabItem {
-					Label("Корзина", image: .cartCross)
-				}
 		}
 	}
 }
