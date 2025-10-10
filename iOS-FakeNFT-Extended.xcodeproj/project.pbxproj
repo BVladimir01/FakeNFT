@@ -157,6 +157,7 @@
 		ABC5E16A2C31F5AF002B4068 /* iOS-FakeNFT-Extended */ = {
 			isa = PBXGroup;
 			children = (
+				E7D77D152E98F04100F9E290 /* UIElements */,
 				F4A8BCEC2E913C6D00A01863 /* Info.plist */,
 				ABC5E16B2C31F5AF002B4068 /* iOSFakeNFTExtendedApp.swift */,
 				ABC5E1E92C32084F002B4068 /* Localizable.strings */,
@@ -314,6 +315,13 @@
 				ABC5E1E52C320585002B4068 /* LinePageControl.swift */,
 			);
 			path = Common;
+			sourceTree = "<group>";
+		};
+		E7D77D152E98F04100F9E290 /* UIElements */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = UIElements;
 			sourceTree = "<group>";
 		};
 		F4A8C1142E96AA9900A01863 /* PreviewWrappers */ = {
