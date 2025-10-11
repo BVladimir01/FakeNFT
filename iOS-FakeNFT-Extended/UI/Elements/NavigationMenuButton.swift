@@ -14,12 +14,7 @@ struct NavigationMenuButton: View {
         static let defaultColor: Color = .ypBlack
     }
 
-    enum IconType {
-        case asset(String)
-        case system(String)
-    }
-
-    let icon: IconType
+    let icon: String
     var color: Color = Constants.defaultColor
     var iconSize: CGFloat = Constants.defaultIconSize
     var buttonSize: CGFloat = Constants.defaultButtonSize
@@ -28,7 +23,8 @@ struct NavigationMenuButton: View {
 
     var body: some View {
         Button(action: action) {
-            imageView
+            Image(icon)
+                .resizable()
                 .scaledToFit()
                 .foregroundColor(color)
                 .frame(width: iconSize, height: iconSize)
@@ -36,28 +32,16 @@ struct NavigationMenuButton: View {
         .frame(width: buttonSize, height: buttonSize)
         .contentShape(Rectangle())
     }
-
-    @ViewBuilder
-    private var imageView: some View {
-        switch icon {
-            case .asset(let name):
-                Image(name)
-                    .resizable()
-            case .system(let systemName):
-                Image(systemName: systemName)
-                    .resizable()
-        }
-    }
 }
 
 #Preview {
     VStack(spacing: 20) {
-        NavigationMenuButton(icon: .asset("text_left")) {
+        NavigationMenuButton(icon: "text_left") {
             print("Asset tapped")
         }
 
-        NavigationMenuButton(icon: .system("square.and.pencil")) {
-            print("SF Symbol tapped")
+        NavigationMenuButton(icon: "square_and_pencil") {
+            print("Asset tapped")
         }
     }
     .padding()
