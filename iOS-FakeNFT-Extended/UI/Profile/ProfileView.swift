@@ -11,17 +11,15 @@ struct ProfileView: View {
     var body: some View {
         VStack {
             HStack(spacing: 16) {
-                // TODO: Заменить на фото профиля
-                Circle()
-                    .frame(width: 70)
+                ProfileImage(image: Image(.mockProfile))
                 Text("Joaquin Phoenix")
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .font(Font(UIFont.headline3))
-                    .foregroundColor(.ypUBlack)
+                    .font(Font(UIFont.bodyRegular))
             }
             Group {
                 Text("Дизайнер из Казани, люблю цифровое искусство и бейглы. В моей коллекции уже 100+ NFT, и еще больше — на моём сайте. Открыт к коллаборациям.")
-                    .foregroundColor(.ypUBlack)
+                    .font(Font(UIFont.bodyRegular))
                     .padding(.top, 20)
                 Text("Joaquin Phoenix.com")
                     .foregroundColor(.ypUBlue)
@@ -46,6 +44,7 @@ struct ProfileView: View {
             }
         }
         .toolbarRole(.editor)
+        .background(Color.ypWhite)
     }
 
     // MARK: - SubViews:
