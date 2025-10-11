@@ -8,16 +8,8 @@ import SwiftUI
 
 struct NavigationMenuButton: ToolbarContent {
 
-    enum Constants {
-        static let defaultIconSize: CGFloat = 24
-        static let defaultButtonSize: CGFloat = 42
-        static let defaultColor: Color = .ypBlack
-    }
-
     let icon: String
-    var color: Color = Constants.defaultColor
-    var iconSize: CGFloat = Constants.defaultIconSize
-    var buttonSize: CGFloat = Constants.defaultButtonSize
+    let defaultColor: Color = .ypBlack
 
     var action: () -> Void
 
@@ -25,13 +17,8 @@ struct NavigationMenuButton: ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             Button(action: action) {
                 Image(icon)
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundColor(color)
-                    .frame(width: iconSize, height: iconSize)
+                    .foregroundColor(defaultColor)
             }
-            .frame(width: buttonSize, height: buttonSize)
-            .contentShape(Rectangle())
         }
     }
 }
@@ -40,7 +27,7 @@ struct NavigationMenuButton: ToolbarContent {
     NavigationStack {
         Text("Preview NavigationMenuButton")
             .toolbar {
-                NavigationMenuButton(icon: "text_left") {
+                NavigationMenuButton(icon: "sort") {
                     print("Asset tapped")
                 }
             }
