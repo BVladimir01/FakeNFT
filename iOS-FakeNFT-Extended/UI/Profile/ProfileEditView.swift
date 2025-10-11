@@ -11,13 +11,29 @@ struct ProfileEditView: View {
     @State private var name = "Joaquin Phoenix"
     @State private var description = "Дизайнер из Казани, люблю цифровое искусство и бейглы. В моей коллекции уже 100+ NFT, и еще больше — на моём сайте. Открыт к коллаборациям."
     @State private var site = "https://hello.com"
+    @State private var showContextMednu: Bool = false
 
     var body: some View {
         VStack(spacing: 24) {
             ProfileImage(image: Image(.mockProfile), canEdit: true) {
-                // TODO: Edit Image action
-                print("Edit Image")
+                showContextMednu = true
             }
+            .actionSheet(isPresented: $showContextMednu) {
+                ActionSheet(
+                    title: Text("Фото профиля"),
+                    buttons: [
+                        .default(Text("Изменить фото")) {
+                            // TODO: Edit Picture action here
+                            print("Edit Picture")
+                        },
+                        .destructive(Text("Удалить фото")) {
+                            // TODO: Delete Picture action here
+                            print("Delete Picture")
+                        },
+                        .cancel(Text("Отмена"))]
+                )
+            }
+
             VStack(alignment: .leading, spacing: 8) {
                 Text("Имя")
                     .font(Font(UIFont.headline3))
@@ -37,11 +53,6 @@ struct ProfileEditView: View {
                     .font(Font(UIFont.headline3))
                 TextField("", text: $site)
                     .applyTextInputStyle()
-                    .disabled(true)
-                    .onTapGesture {
-                        // TODO: Alert site edit action
-                        print("Edit Site")
-                    }
             }
             Spacer()
         }
