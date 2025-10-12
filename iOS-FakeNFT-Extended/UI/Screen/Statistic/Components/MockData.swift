@@ -18,11 +18,11 @@ enum Avatar {
 
 struct MockData {
     static let users: [User] = [
-        User(id: "1", name: "Alex", avatar: URL(string: Avatar.user1), nfts: Array(repeating: "NFT", count: 112),
+        User(id: "7", name: "Alex", avatar: URL(string: Avatar.user1), nfts: Array(repeating: "NFT", count: 72),
              rating: "5"),
         User(id: "2", name: "Bill", avatar: URL(string: Avatar.user2), nfts: Array(repeating: "NFT", count: 98),
              rating: "4"),
-        User(id: "3", name: "Alla", avatar: URL(string: Avatar.user3), nfts: Array(repeating: "NFT", count: 72),
+        User(id: "3", name: "Alla", avatar: URL(string: Avatar.user3), nfts: Array(repeating: "NFT", count: 112),
              rating: "3"),
         User(id: "4", name: "Mads", avatar: nil, nfts: Array(repeating: "NFT", count: 71),
              rating: "3"),
@@ -30,7 +30,7 @@ struct MockData {
              rating: "2"),
         User(id: "6", name: "Lea", avatar: URL(string: Avatar.user6), nfts: Array(repeating: "NFT", count: 23),
              rating: "2"),
-        User(id: "7", name: "Eric", avatar: URL(string: Avatar.user7), nfts: Array(repeating: "NFT", count: 11),
+        User(id: "1", name: "Eric", avatar: URL(string: Avatar.user7), nfts: Array(repeating: "NFT", count: 11),
              rating: "1")
     ]
 }
