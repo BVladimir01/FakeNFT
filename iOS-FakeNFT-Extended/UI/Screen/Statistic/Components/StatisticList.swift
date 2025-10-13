@@ -8,7 +8,13 @@ import SwiftUI
 
 struct StatisticList: View {
 
+    enum SortOption {
+        case byName
+        case byRating
+    }
+
     let users = MockData.users
+    let sortOption: SortOption
 
     var body: some View {
         List {
@@ -21,13 +27,23 @@ struct StatisticList: View {
         .listStyle(.plain)
         .scrollIndicators(.hidden)
         .safeAreaPadding(EdgeInsets(top: 20, leading: 16, bottom: 0, trailing: 16))
+        .animation(.easeInOut, value: sortOption)
     }
 
     private var sortedUsers: [User] {
-        users.sorted { $0.ratingValue > $1.ratingValue }
+        switch sortOption {
+            case .byName:
+                return users.sorted { $0.name < $1.name }
+            case .byRating:
+                return users.sorted { $0.ratingValue > $1.ratingValue }
+        }
     }
 }
 
-#Preview {
-    StatisticList()
+#Preview("By Rating") {
+    StatisticList(sortOption: .byRating)
+}
+
+#Preview("By Name") {
+    StatisticList(sortOption: .byName)
 }
