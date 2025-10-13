@@ -22,6 +22,12 @@ final class ViewFactory {
 		switch screen {
 			case .dummy:
 				EmptyView()
+			case .payment:
+				EmptyView()
+			case .web:
+				EmptyView()
+			case .successPayment:
+				EmptyView()
 		}
 	}
 
@@ -33,6 +39,22 @@ final class ViewFactory {
 	func makeCoverView(for coverType: Cover) -> some View {
 		switch coverType {
 			case .dummy:
+				EmptyView()
+			case .deleteConfirmation:
+				EmptyView()
+		}
+	}
+
+	@ViewBuilder
+	func makeTabView(for tab: Tab) -> some View {
+		switch tab {
+			case .catalog:
+				TestCatalogView()
+			case .cart:
+				EmptyView()
+			case .profile:
+				EmptyView()
+			case .statistic:
 				EmptyView()
 		}
 	}
