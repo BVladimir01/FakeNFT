@@ -25,8 +25,16 @@ struct ProfieInfo: View {
 }
 
 #Preview {
-    LightDarkPreviewWrapper {
-        ProfieInfo(user: User.mock2)
-            .padding(.horizontal)
+LightDarkPreviewWrapper {
+    ProfieInfo(user:
+        User(
+            id: "dsfsd",
+            name: "",
+            avatar: URL(string: "https://i.ibb.co/fVLFtWrM/c1f8f42c5f5bd684e27d93131dc6ffd4696cdfd3.jpg") ?? nil,
+            nfts: [],
+            rating: "4.5"
+            )
+        )
+        .padding(.horizontal)
     }
 }
