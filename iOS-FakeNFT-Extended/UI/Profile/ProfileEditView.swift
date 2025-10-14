@@ -16,7 +16,8 @@ struct ProfileEditView: View {
     @State private var avatarUrlString: String = "https://i.ibb.co/fVLFtWrM/c1f8f42c5f5bd684e27d93131dc6ffd4696cdfd3.jpg"
     @State private var newAvatarUrlString: String = ""
     @State private var isSaveInProgress: Bool = false
-    
+    @State private var wantExitHasChanges: Bool = false
+    @Environment(\.dismiss) private var dismiss
     var body: some View {
         VStack(spacing: 24) {
             ProfileImage(imageUrl: URL(string: avatarUrlString) ?? nil, canEdit: true) {
@@ -45,6 +46,16 @@ struct ProfileEditView: View {
                 }
                 Button("Сохранить") {
                     avatarUrlString = newAvatarUrlString
+                }
+            }
+            .alert("Уверены,\nчто хотите выйти?", isPresented: $wantExitHasChanges) {
+                Button("Остаться") {
+                    // TODO: Cancel action
+                    print("Cancel")
+                }
+                Button("Выйти") {
+                    // TODO: Exit action
+                    print("Exit")
                 }
             }
             
@@ -100,7 +111,35 @@ struct ProfileEditView: View {
         }
         .padding(.horizontal)
         .background(Color.ypWhite)
+        .navigationBarBackButtonHidden(true) /// Может это лучше убрать, пока оставлю
+        .introspectNavigationController { navigationController in /// Отключаем стандартный жест свайпа назад
+            navigationController.interactivePopGestureRecognizer?.isEnabled = false
+        }
+        .gesture(
+            DragGesture(minimumDistance: 30, coordinateSpace: .global)
+            .onEnded { value in
+                if value.translation.width > 50 {
+                    // TODO: Тут нужна проверка, поменялись ли даннные, если нет то пропустим
+                    wantExitHasChanges = true
+                }
+            }
+        )
     }
+}
+
+// MARK: - UIViewControllerRepresentable
+struct NavigationControllerIntrospection: UIViewControllerRepresentable {
+    var callback: (UINavigationController) -> Void
+    func makeUIViewController(context: Context) -> UIViewController {
+        let controller = UIViewController()
+        DispatchQueue.main.async {
+            if let navigationController = controller.navigationController {
+                callback(navigationController)
+            }
+        }
+        return controller
+    }
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
 #Preview {
