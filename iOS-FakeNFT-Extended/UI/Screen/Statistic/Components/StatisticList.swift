@@ -8,7 +8,7 @@ import SwiftUI
 
 struct StatisticList: View {
 
-    enum SortOption {
+    enum SortOption: String, CaseIterable {
         case byName
         case byRating
     }

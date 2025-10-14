@@ -7,7 +7,9 @@
 import SwiftUI
 
 struct StatisticView: View {
-    @State private var selectedSort = StatisticList.SortOption.byRating
+    @AppStorage(AppStorageKeys.statisticSortOption)
+    private var sortRaw = StatisticList.SortOption.byRating.rawValue
+    private var selectedSort: StatisticList.SortOption { StatisticList.SortOption(rawValue: sortRaw) ?? .byRating }
     @State private var showSortDialog = false
 
     var body: some View {
@@ -18,8 +20,8 @@ struct StatisticView: View {
                 }
                 .toolbar(.visible, for: .navigationBar)
                 .confirmationDialog("Сортировка", isPresented: $showSortDialog, titleVisibility: .visible) {
-                    Button("По имени") { selectedSort = .byName }
-                    Button("По рейтингу") { selectedSort = .byRating }
+                    Button("По имени") { sortRaw = StatisticList.SortOption.byName.rawValue }
+                    Button("По рейтингу") { sortRaw = StatisticList.SortOption.byRating.rawValue }
                     Button("Закрыть", role: .cancel) { }
                 }
         }
