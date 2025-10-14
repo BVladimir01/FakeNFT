@@ -11,5 +11,11 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Xcode
         run: sudo xcode-select -switch /Applications/Xcode_16.4.app
+      - name: Install Tuist
+        run: |
+          curl -Ls https://install.tuist.io | bash
+          tuist --version
+      - name: Generate project
+        run: tuist generate --no-open
       - name: Build
         run: xcodebuild -scheme iOS-FakeNFT-Extended -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16'
