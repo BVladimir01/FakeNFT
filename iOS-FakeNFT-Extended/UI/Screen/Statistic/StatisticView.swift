@@ -13,21 +13,13 @@ struct StatisticView: View {
     var body: some View {
         NavigationStack {
             StatisticList(sortOption: selectedSort)
-                .toolbar {
-                    NavigationMenuButton(icon: .sort) {
-                        showSortDialog = true
-                    }
+                .toolbarPreference(imageName: .sort) {
+                    showSortDialog = true
                 }
                 .toolbar(.visible, for: .navigationBar)
                 .confirmationDialog("Сортировка", isPresented: $showSortDialog, titleVisibility: .visible) {
-                    Button("По имени") {
-                        selectedSort = .byName
-                    }
-
-                    Button("По рейтингу") {
-                        selectedSort = .byRating
-                    }
-
+                    Button("По имени") { selectedSort = .byName }
+                    Button("По рейтингу") { selectedSort = .byRating }
                     Button("Закрыть", role: .cancel) { }
                 }
         }
