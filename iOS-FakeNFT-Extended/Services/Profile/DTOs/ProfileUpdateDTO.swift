@@ -12,7 +12,6 @@ struct ProfileUpdateDTO: Encodable {
     let avatar: String?
     let description: String?
     let website: String?
-    
     func toFormURLEncoded() -> Data? {
         var components = URLComponents()
         components.queryItems = [

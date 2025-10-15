@@ -20,17 +20,14 @@ struct ProfileRequest: NetworkRequest {
 @MainActor
 final class ProfileServiceImpl: ProfileService {
     private let networkClient: any NetworkClient
-    
     init(networkClient: any NetworkClient) {
         self.networkClient = networkClient
     }
-    
     func loadProfile() async throws -> User {
         let request = ProfileRequest(httpMethod: .get)
         return try await networkClient.send(request: request)
     }
-    
-    func saveProfile(_ user: User) async throws {
+    func saveProfile(_ user: User) async throws -> User {
         let dto = ProfileUpdateDTO(
             name: user.name,
             avatar: user.avatar?.absoluteString,
@@ -38,13 +35,12 @@ final class ProfileServiceImpl: ProfileService {
             website: user.website?.absoluteString
         )
         let request = ProfileRequest(httpMethod: .put, dto: dto)
-        try await networkClient.send(request: request)
+        return try await networkClient.send(request: request)
     }
-    
     func hasChanges(original: User, current: User) -> Bool {
-        return original.name != current.name ||
-               original.description != current.description ||
-               original.website != current.website ||
-               original.avatar != current.avatar
+        original.name != current.name ||
+        original.description != current.description ||
+        original.website != current.website ||
+        original.avatar != current.avatar
     }
 }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// Стили для текстовых полей в редатировании профиля
+/// Стили для текстовых полей в редкатировании профиля
 struct TextInputStyle: ViewModifier {
     func body(content: Content) -> some View {
         content

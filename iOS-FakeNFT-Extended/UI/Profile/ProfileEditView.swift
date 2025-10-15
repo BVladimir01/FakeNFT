@@ -9,11 +9,11 @@ import SwiftUI
 
 struct ProfileEditView: View {
     @State private var name = "Joaquin Phoenix"
-    @State private var description = "Дизайнер из Казани, люблю цифровое искусство и бейглы. В моей коллекции уже 100+ NFT, и еще больше — на моём сайте. Открыт к коллаборациям."
+    @State private var description = "Дизайнер из Казани, люблю цифровое искусство и бейглы."
     @State private var siteUrlString: String = "https://hello.com"
-    @State private var showContextMednu: Bool = false
+    @State private var showContextMenu: Bool = false
     @State private var showSiteEditAlert: Bool = false
-    @State private var avatarUrlString: String = "https://i.ibb.co/fVLFtWrM/c1f8f42c5f5bd684e27d93131dc6ffd4696cdfd3.jpg"
+    @State private var avatarUrlString: String = "https://tinyurl.com/mrxzhdb7"
     @State private var newAvatarUrlString: String = ""
     @State private var isSaveInProgress: Bool = false
     @State private var wantExitHasChanges: Bool = false
@@ -21,9 +21,9 @@ struct ProfileEditView: View {
     var body: some View {
         VStack(spacing: 24) {
             ProfileImage(imageUrl: URL(string: avatarUrlString) ?? nil, canEdit: true) {
-                showContextMednu = true
+                showContextMenu = true
             }
-            .actionSheet(isPresented: $showContextMednu) {
+            .actionSheet(isPresented: $showContextMenu) {
                 ActionSheet(
                     title: Text("Фото профиля"),
                     buttons: [
@@ -58,7 +58,6 @@ struct ProfileEditView: View {
                     print("Exit")
                 }
             }
-            
             VStack(alignment: .leading, spacing: 8) {
                 Text("Имя")
                     .font(Font(UIFont.headline3))
@@ -72,7 +71,9 @@ struct ProfileEditView: View {
                     .applyTextInputStyle()
                     .scrollContentBackground(.hidden)
             }
-            .frame(maxHeight: 155) /// Не знаю как тут сделать hagContent–поведение, помогите
+            .frame(minHeight: 40, maxHeight: 155)
+            .fixedSize(horizontal: false, vertical: true)
+            
             VStack(alignment: .leading, spacing: 8) {
                 Text("Сайт")
                     .font(Font(UIFont.headline3))
