@@ -15,19 +15,6 @@ struct NFTCollectionsListView: View {
 
     var body: some View {
         scrollView
-            .overlay {
-                ProgressView()
-                    .tint(.ypBlack)
-                    .background {
-                        RoundedRectangle(cornerRadius: 5)
-                            .fill(Color.ypUGrey)
-                            .opacity(0.5)
-                            .scaleEffect(2)
-                    }
-                    .scaleEffect(1.5)
-                    .opacity(viewModel.state == .loading ? 1 : 0)
-            }
-            .navigationTitle("Lmao")
             .confirmationDialog(
                 "sorting",
                 isPresented: $isSelectingSortingType
@@ -45,7 +32,6 @@ struct NFTCollectionsListView: View {
             }
             .onAppear {
                 Task {
-                    print("loading from start")
                     await viewModel.fetchNewCollections(number: 10)
                 }
             }
@@ -59,7 +45,6 @@ struct NFTCollectionsListView: View {
                         .onAppear {
                             if collection == viewModel.collections.last {
                                 Task {
-                                    print("loading from list end")
                                     await viewModel.fetchNewCollections(number: 10)
                                 }
                             }
@@ -92,7 +77,7 @@ struct NFTCollectionsListView: View {
     NavigationStack {
         NFTCollectionsListView(
             viewModel: NFTCollectionsListViewModel(
-                collectionsProvider: NFTCollectionsProvider()
+                collectionsProvider: NFTCollectionsMockProvider()
             )
         )
     }
