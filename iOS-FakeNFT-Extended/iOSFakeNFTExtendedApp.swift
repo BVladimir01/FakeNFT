@@ -11,7 +11,7 @@ struct FakeNFTExtendedApp: App {
         UITabBar.appearance().scrollEdgeAppearance = tabAppearance
 
         let navAppearance = UINavigationBarAppearance()
-        navAppearance.configureWithOpaqueBackground()
+		navAppearance.configureWithTransparentBackground()
         navAppearance.backgroundColor = .ypWhite
         UINavigationBar.appearance().standardAppearance = navAppearance
         UINavigationBar.appearance().scrollEdgeAppearance = navAppearance
