@@ -49,7 +49,6 @@ struct PaymentView: View {
 						.font(.system(size: 13, weight: .regular))
 						Button("Оплатить") {
 							viewModel.pay {
-								viewModel.onSuccess()
 								coordinator.openSuccessPaymentScreen()
 							}
 						}

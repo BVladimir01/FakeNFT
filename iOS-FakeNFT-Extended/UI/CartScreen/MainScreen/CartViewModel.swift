@@ -48,15 +48,8 @@ final class CartViewModel {
 		updateItems()
 	}
 
-	func clearCart() {
-		print("CLEAR CART")
-		print(items)
-		isLoading = true
-		Task {
-			try await cartService.updateOrder(with: [])
-			items.removeAll()
-			isLoading = false
-		}
+	func clearCart() async throws {
+		try await cartService.updateOrder(with: [])
 	}
 
 	func isFirstItem(at index: Int) -> Bool {

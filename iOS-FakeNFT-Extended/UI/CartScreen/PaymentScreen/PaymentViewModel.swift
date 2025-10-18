@@ -10,7 +10,7 @@ import SwiftUI
 @MainActor
 @Observable
 final class PaymentViewModel {
-	let onSuccess: () -> Void
+	let onSuccess: () async throws -> Void
 	var isLoading = false
 	var isAlertPresented = false
 	var paymentMethods: [PaymentMethod] = []
@@ -21,12 +21,13 @@ final class PaymentViewModel {
 	private let paymentService: any PaymentService
 	private var lastAction: (() -> Void)?
 
-	init(paymentService: any PaymentService, onSuccess: @escaping () -> Void) {
+	init(paymentService: any PaymentService, onSuccess: @escaping () async throws -> Void) {
 		self.paymentService = paymentService
 		self.onSuccess = onSuccess
 	}
 
 	func load() {
+		guard paymentMethods.isEmpty else { return }
 		isLoading = true
 		Task {
 			do {
@@ -41,18 +42,25 @@ final class PaymentViewModel {
 		}
 	}
 
+	private var paymentSucceeded = false
+
 	func pay(onSuccess: @escaping () -> Void) {
 		isLoading = true
 		Task {
 			do {
 				guard let selectedMethod else { return }
-				try await paymentService.performPayment(with: selectedMethod)
+				if !paymentSucceeded {
+					try await paymentService.performPayment(with: selectedMethod)
+					paymentSucceeded = true
+				}
+				try await self.onSuccess()
 				lastAction = nil
 				isLoading = false
+				paymentSucceeded = false
 				onSuccess()
 			} catch {
 				print(error.localizedDescription)
-				lastAction = { [weak self] in
+				lastAction = { [weak self, onSuccess] in
 					self?.pay(onSuccess: onSuccess)
 				}
 				isAlertPresented = true

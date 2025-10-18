@@ -20,7 +20,7 @@ struct CartView: View {
 	var body: some View {
 		Group {
 			if viewModel.items.isEmpty && !viewModel.isLoading {
-				Text("У вас еще нет NFT")
+				Text("Корзина пуста")
 					.font(.system(size: 17, weight: .bold))
 					.foregroundStyle(.ypBlack)
 					.frame(maxWidth: .infinity, maxHeight: .infinity)
