@@ -61,9 +61,8 @@ struct MyNFTList: View {
 }
 
 #Preview {
-    
-        NavigationView {
-            LightDarkPreviewWrapper {
+    NavigationView {
+        LightDarkPreviewWrapper {
             NavigationLink(destination: MyNFTList()) {
                 Text("Test")
             }
