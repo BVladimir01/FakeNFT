@@ -88,6 +88,9 @@
     "John Doe" : {
 
     },
+    "My NFTs" : {
+
+    },
     "tabCart" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -163,6 +166,9 @@
 
     },
     "Имя" : {
+
+    },
+    "Мои NFT" : {
 
     },
     "Описание" : {
