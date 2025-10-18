@@ -1,5 +1,5 @@
 //
-//  BaseButton.swift
+//  OpenWebsiteButton.swift
 //  iOS-FakeNFT-Extended
 //
 //  Created by Алина on 18.10.2025.
