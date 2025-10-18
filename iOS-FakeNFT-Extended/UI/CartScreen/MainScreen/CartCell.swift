@@ -1,4 +1,12 @@
+//
+//  CartCell.swift
+//  iOS-FakeNFT-Extended
+//
+//  Created by Симонов Иван Дмитриевич on 04.10.2025.
+//
 
+import SwiftUI
+import Kingfisher
 struct CartCell: View {
 	let removeAction: () -> Void
 	let cartItem: CartItem
