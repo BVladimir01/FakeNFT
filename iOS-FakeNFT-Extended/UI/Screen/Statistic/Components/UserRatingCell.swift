@@ -33,17 +33,24 @@ struct UserRatingCell: View {
         HStack(spacing: Constants.Layout.horizontalSpacing) {
             placeRatingLabel
             cardStatistics
-                .background(Color.ypLightGrey)
-                .cornerRadius(Constants.Layout.cornerRadius)
+                .clipShape(
+                    RoundedRectangle(cornerRadius: Constants.Layout.cornerRadius, style: .continuous)
+                )
+                .background(
+                    RoundedRectangle(cornerRadius: Constants.Layout.cornerRadius, style: .continuous)
+                        .fill(Color.ypLightGrey)
+                )
         }
-        .frame(maxWidth: .infinity)
-        .frame(minHeight: Constants.Sizes.cellMinHeight)
+        .frame(maxWidth: .infinity, minHeight: Constants.Sizes.cellMinHeight)
         .background(Color(.systemBackground))
     }
 
     private var placeRatingLabel: some View {
-        StatisticLabel(text: "\(ranking)", font: Font(UIFont.caption1),
-                       maxWidth: Constants.Sizes.ratingLabelWidth, maxHeight: Constants.Sizes.labelMaxHeight)
+        StatisticLabel(
+            text: "\(ranking)",
+            font: Font(UIFont.caption1),
+            maxWidth: Constants.Sizes.ratingLabelWidth,
+            maxHeight: Constants.Sizes.labelMaxHeight)
     }
 
     private var cardStatistics: some View {
@@ -66,7 +73,7 @@ struct UserRatingCell: View {
             .aspectRatio(contentMode: .fill)
             .frame(width: Constants.Sizes.avatarSize, height: Constants.Sizes.avatarSize)
             .clipShape(Circle())
-            .foregroundColor(.ypUGrey)
+            .foregroundStyle(.ypUGrey)
 
         if let url = user.avatar {
             KFImage(url)
