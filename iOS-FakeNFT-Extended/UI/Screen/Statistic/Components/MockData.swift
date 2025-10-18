@@ -42,6 +42,6 @@ struct MockData {
         User(id: "1", name: "Eric", avatar: URL(string: Avatar.user7), nfts: Array(repeating: "NFT", count: 11),
              rating: "1"),
         User(id: "1", name: "Joaquin Phoenix", avatar: URL(string: Avatar.user8),
-             nfts: Array(repeating: "NFT", count: 11), rating: "1", description: Bio.statisticCard)
+             nfts: Array(repeating: "NFT", count: 112), rating: "1", description: Bio.statisticCard)
     ]
 }
