@@ -1,11 +1,3 @@
-//
-//  CartView.swift
-//  iOS-FakeNFT-Extended
-//
-//  Created by Симонов Иван Дмитриевич on 07.10.2025.
-//
-
-import SwiftUI
 
 struct CartView: View {
 	@State var viewModel: CartViewModel
