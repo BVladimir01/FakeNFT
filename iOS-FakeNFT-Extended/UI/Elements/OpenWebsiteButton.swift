@@ -25,6 +25,7 @@ struct OpenWebsiteButton: View {
         }
         .background(color, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
         .contentShape(RoundedRectangle(cornerRadius: 16))
+        .frame(minHeight: 44)
         .overlay(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .stroke(textColor, lineWidth: 1)
