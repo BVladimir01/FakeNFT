@@ -38,4 +38,3 @@ struct ProfileInfo: View {
         .padding(.horizontal)
     }
 }
-
