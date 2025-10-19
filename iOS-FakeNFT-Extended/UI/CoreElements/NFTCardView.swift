@@ -93,7 +93,8 @@ struct NFTCardView: View {
 					Group {
 						Text(name)
 							.font(.system(size: 17, weight: .bold))
-					Text("\(priceString) \(currency.rawValue.uppercased())")
+						Text("\(priceString) \(currency.rawValue.uppercased())")
+							.font(.system(size: 10, weight: .medium))
 					}
 					.foregroundStyle(.ypBlack)
 				}
