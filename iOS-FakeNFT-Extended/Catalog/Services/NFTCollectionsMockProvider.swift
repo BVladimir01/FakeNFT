@@ -41,7 +41,7 @@ actor NFTCollectionsMockProvider: NFTCollectionsProviderProtocol {
         )
     ]
 
-    nonisolated private func getNFT(id: NFTCollectionModel.ID) -> NFTCollectionModel {
+	private func getNFT(id: NFTCollectionModel.ID) -> NFTCollectionModel {
         let nftCollection = nftCollections.randomElement()!
         return .init(
             imageURL: nftCollection.imageURL,
@@ -53,7 +53,7 @@ actor NFTCollectionsMockProvider: NFTCollectionsProviderProtocol {
         )
     }
 
-    nonisolated func fetch(number: Int) async throws -> [NFTCollectionModel] {
+	func fetch(number: Int) async throws -> [NFTCollectionModel] {
         try? await Task.sleep(for: .seconds(3))
         return (0..<number).map { _ in Int.random(in: 0..<10_000_000) }.map { getNFT(id: $0)}
     }

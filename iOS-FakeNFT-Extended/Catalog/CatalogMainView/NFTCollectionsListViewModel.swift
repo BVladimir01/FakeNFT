@@ -10,7 +10,7 @@ import SwiftUI
 
 @Observable
 @MainActor
-class NFTCollectionsListViewModel {
+final class NFTCollectionsListViewModel {
 
     private(set) var state: State = .empty
     private(set) var collections: [NFTCollectionModel] = []
@@ -68,4 +68,5 @@ enum CatalogSorting: CaseIterable, Identifiable {
             NSLocalizedString("Catalog.Sorting.BySize", comment: "")
         }
     }
+
 }
