@@ -49,7 +49,7 @@ final class ViewFactory {
 	func makeTabView(for tab: Tab) -> some View {
 		switch tab {
 			case .catalog:
-				TestCatalogView()
+				NFTCollectionsListView(viewModel: NFTCollectionsListViewModel(collectionsProvider: NFTCollectionsMockProvider()))
 			case .cart:
 				EmptyView()
 			case .profile:
