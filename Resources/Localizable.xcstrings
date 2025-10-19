@@ -7,6 +7,19 @@
     "%@" : {
 
     },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@:" : {
+
+    },
     "Catalog.openNft" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -62,6 +75,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "По названию"
+          }
+        }
+      }
+    },
+    "CatalogDetails.CollectionAuthor" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Author of the collection"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Автор коллекции"
           }
         }
       }
