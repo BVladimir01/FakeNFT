@@ -18,6 +18,9 @@ struct NFTCardView: View {
 	private let isFavorite: Bool
 	private let isAddedToCart: Bool
 
+	private let onCartTap: () -> Void
+	private let onFavoriteTap: () -> Void
+
 	private var priceString: String {
 		Decimal(price)
 			.formatted(.number.precision(.fractionLength(0...2)))
@@ -30,7 +33,9 @@ struct NFTCardView: View {
 		price: Double,
 		currency: Currency,
 		isFavorite: Bool,
-		isAddedToCart: Bool
+		isAddedToCart: Bool,
+		onCartTap: @escaping () -> Void,
+		onFavoriteTap: @escaping () -> Void
 	) {
 		self.name = name
 		self.imageURL = imageURL
@@ -39,6 +44,8 @@ struct NFTCardView: View {
 		self.currency = currency
 		self.isFavorite = isFavorite
 		self.isAddedToCart = isAddedToCart
+		self.onCartTap = onCartTap
+		self.onFavoriteTap = onFavoriteTap
 	}
 
 	var body: some View {
@@ -64,8 +71,10 @@ struct NFTCardView: View {
 					.resizable()
 					.scaledToFit()
 					.overlay(alignment: .topTrailing) {
-						Image(isFavorite ? .active : .noActive)
-							.foregroundStyle(isFavorite ? .ypURed : .ypUWhite)
+						Button(action: onFavoriteTap) {
+							Image(isFavorite ? .active : .noActive)
+								.foregroundStyle(isFavorite ? .ypURed : .ypUWhite)
+						}
 					}
 			case .failure:
 				Image(systemName: "exclamationmark.triangle.fill")
@@ -89,8 +98,10 @@ struct NFTCardView: View {
 					.foregroundStyle(.ypBlack)
 				}
 				Spacer()
-				Image(isAddedToCart ? .cartCross : .cart)
-					.foregroundStyle(.ypBlack)
+				Button(action: onCartTap) {
+					Image(isAddedToCart ? .cartCross : .cart)
+						.foregroundStyle(.ypBlack)
+				}
 			}
 		}
 	}
@@ -107,7 +118,9 @@ struct NFTCardView: View {
 			price: 31.12,
 			currency: .eth,
 			isFavorite: true,
-			isAddedToCart: true
+			isAddedToCart: true,
+			onCartTap: { },
+			onFavoriteTap: { }
 		)
 		NFTCardView(
 			name: "Test name",
@@ -116,7 +129,20 @@ struct NFTCardView: View {
 			price: 31,
 			currency: .eth,
 			isFavorite: false,
-			isAddedToCart: false
+			isAddedToCart: false,
+			onCartTap: { },
+			onFavoriteTap: { }
+		)
+		NFTCardView(
+			name: "Test name",
+			imageURL: nil,
+			rating: 0,
+			price: 31.1,
+			currency: .eth,
+			isFavorite: false,
+			isAddedToCart: false,
+			onCartTap: { },
+			onFavoriteTap: { }
 		)
 	}
 }
