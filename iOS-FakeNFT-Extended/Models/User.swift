@@ -15,7 +15,7 @@ struct User: Codable, Identifiable, Sendable {
     let nfts: [String]
     let rating: String?
     let id: String
-    let likes: [String]?  // ОПЦИОНАЛЬНЫЙ для GET
+    let likes: [String]?  // ОПЦИОНАЛЬНЫЙ  для GET
 
     var ratingValue: Int {
         nfts.count
