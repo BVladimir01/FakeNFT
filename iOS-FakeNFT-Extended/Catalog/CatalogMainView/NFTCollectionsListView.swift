@@ -31,9 +31,7 @@ struct NFTCollectionsListView: View {
                 isSelectingSortingType = true
             }
             .onAppear {
-                Task {
-                    await viewModel.fetchNewCollections(number: 10)
-                }
+				viewModel.fetchInitialCollections()
             }
     }
 
@@ -44,9 +42,7 @@ struct NFTCollectionsListView: View {
                     button(for: collection)
                         .onAppear {
                             if collection == viewModel.collections.last {
-                                Task {
-                                    await viewModel.fetchNewCollections(number: 10)
-                                }
+								viewModel.fetchNewCollections()
                             }
                         }
                 }
@@ -59,7 +55,7 @@ struct NFTCollectionsListView: View {
 
     private func button(for collection: NFTCollectionModel) -> some View {
         Button {
-            print("\(collection) tapped")
+			viewModel.collectionTapped(collection)
         } label: {
             NFTCollectionCellView(collection: collection)
         }
@@ -73,11 +69,16 @@ struct NFTCollectionsListView: View {
 }
 
 #Preview {
+	let rootCoordinator = RootCoordinatorImpl()
+	let catalogCoordinator = CatalogCoordinator(rootCoordinator: rootCoordinator)
+	let collectionsProvider = NFTCollectionsMockProvider(throwsError: false)
+	let viewModel = NFTCollectionsListViewModel(
+		collectionsProvider: collectionsProvider,
+		coordinator: catalogCoordinator
+	)
     NavigationStack {
         NFTCollectionsListView(
-            viewModel: NFTCollectionsListViewModel(
-                collectionsProvider: NFTCollectionsMockProvider()
-            )
+            viewModel: viewModel
         )
     }
 
