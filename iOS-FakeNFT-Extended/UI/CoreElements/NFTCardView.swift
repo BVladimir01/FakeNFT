@@ -21,6 +21,8 @@ struct NFTCardView: View {
 	private let onCartTap: () -> Void
 	private let onFavoriteTap: () -> Void
 
+	private let imageSize: CGFloat = 108
+
 	private var priceString: String {
 		Decimal(price)
 			.formatted(.number.precision(.fractionLength(0...2)))
@@ -53,11 +55,14 @@ struct NFTCardView: View {
 			nftImage
 			nftDetails
 		}
-		.frame(height: 192)
+		.frame(width: imageSize)
 	}
 
 	var nftImage: some View {
 		AsyncImage(url: imageURL) { phase in
+			let errorImage = Image(systemName: "exclamationmark.triangle.fill")
+				.resizable()
+				.scaledToFit()
 			switch phase {
 			case .empty:
 				VStack(spacing: .zero) {
@@ -69,20 +74,21 @@ struct NFTCardView: View {
 			case .success(let image):
 				image
 					.resizable()
-					.scaledToFit()
-					.overlay(alignment: .topTrailing) {
-						Button(action: onFavoriteTap) {
-							Image(isFavorite ? .active : .noActive)
-								.foregroundStyle(isFavorite ? .ypURed : .ypUWhite)
-						}
-					}
+					.scaledToFill()
 			case .failure:
-				Image(systemName: "exclamationmark.triangle.fill")
+				errorImage
 			@unknown default:
-				Image(systemName: "exclamationmark.triangle.fill")
+				errorImage
 			}
 		}
+		.frame(width: imageSize, height: imageSize)
 		.clipShape(RoundedRectangle(cornerRadius: 12))
+		.overlay(alignment: .topTrailing) {
+			Button(action: onFavoriteTap) {
+				Image(isFavorite ? .active : .noActive)
+					.foregroundStyle(isFavorite ? .ypURed : .ypUWhite)
+			}
+		}
 	}
 
 	var nftDetails: some View {
@@ -136,7 +142,7 @@ struct NFTCardView: View {
 		)
 		NFTCardView(
 			name: "Test name",
-			imageURL: nil,
+			imageURL: URL(string: "https://code.s3.yande.net/Mobile/iOS/NFT/Beige/Ellsa/1.png"),
 			rating: 0,
 			price: 31.1,
 			currency: .eth,
