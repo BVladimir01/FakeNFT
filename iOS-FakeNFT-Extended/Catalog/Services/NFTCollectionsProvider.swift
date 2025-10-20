@@ -14,54 +14,56 @@ protocol NFTCollectionsProviderProtocol: Sendable {
 
 actor NFTCollectionsMockProvider: NFTCollectionsProviderProtocol {
 
-	private static let mockNFT = NFTModel(
-		id: UUID(),
-		name: "Myrna Cervantes",
-		imageURL: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Ellsa/1.png")!,
-		rating: 5,
-		price: 39.37,
-		currency: .eth
-	)
-
-	private static let mockAuthor = NFTUserModel(
-		id: UUID(),
-		name: "Jimmie Reilly",
-		description: "daddsd",
-		nfts: [],
-		websiteURL: URL(string: "https://student7.students.practicum.org")!,
-		avatarURL: URL(string: "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/594.jpg")!
-	)
+	let throwsError: Bool
 
     private let nftCollections: [NFTCollectionModel] = [
 		.init(
 			id: UUID(),
 			title: "singulis epicuri",
 			imageURL: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Обложки_коллекций/Brown.png")!,
-			nfts: Array(repeating: mockNFT, count: 3),
+			nftIDs: Array(repeating: UUID(), count: 3),
 			description: "curabitur ...",
-			author: mockAuthor
+			authorID: UUID()
 		),
 		.init(
 			id: UUID(),
 			title: "Beige",
 			imageURL: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Обложки_коллекций/Beige.png")!,
-			nfts: Array(repeating: mockNFT, count: 4),
+			nftIDs: Array(repeating: UUID(), count: 4),
 			description: "A series of ...",
-			author: mockAuthor
+			authorID: UUID()
 		),
 		.init(
 			id: UUID(),
 			title: "unum reque",
 			imageURL: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Обложки_коллекций/White.png")!,
-			nfts: Array(repeating: mockNFT, count: 2),
+			nftIDs: Array(repeating: UUID(), count: 2),
 			description: "dictas ...",
-			author: mockAuthor
+			authorID: UUID()
 		)
     ]
 
+	init(throwsError: Bool = false) {
+		self.throwsError = throwsError
+	}
+
 	func fetch(number: Int) async throws -> [NFTCollectionModel] {
         try? await Task.sleep(for: .seconds(3))
-		return (0..<number).map { _ in nftCollections.randomElement()! }
+		if throwsError {
+			throw NetworkClientError.urlSessionError
+		} else {
+			return (0..<number).map { _ in
+				let baseCollection = nftCollections.randomElement()!
+				return NFTCollectionModel(
+					id: UUID(),
+					title: baseCollection.title,
+					imageURL: baseCollection.imageURL,
+					nftIDs: baseCollection.nftIDs,
+					description: baseCollection.description,
+					authorID: baseCollection.authorID
+				)
+			}
+		}
     }
 
 }
