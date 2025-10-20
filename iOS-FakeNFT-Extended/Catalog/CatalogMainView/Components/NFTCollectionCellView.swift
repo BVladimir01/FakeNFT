@@ -13,7 +13,7 @@ struct NFTCollectionCellView: View {
     private let model: NFTCollectionModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .center, spacing: 4) {
             image
                 .frame(height: 140)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -23,25 +23,37 @@ struct NFTCollectionCellView: View {
     }
 
     private var image: some View {
-        AsyncImage(url: model.imageURL) { image in
-            image
-                .resizable()
-                .scaledToFill()
-                .clipped()
-        } placeholder: {
-            Color.ypUGrey
-                .overlay {
-                    ProgressView()
-                        .tint(.ypUWhite)
-                }
-        }
+		AsyncImage(url: model.imageURL) { phase in
+			let errorImage = Image(systemName: "exclamationmark.triangle.fill")
+				.resizable()
+				.scaledToFit()
+				.foregroundStyle(.ypBlack)
+			switch phase {
+			case .empty:
+				HStack(spacing: .zero) {
+					Spacer()
+					ProgressView()
+						.tint(.ypBlack)
+					Spacer()
+				}
+			case .success(let image):
+				image
+					.resizable()
+					.scaledToFill()
+			case .failure:
+				errorImage
+			@unknown default:
+				errorImage
+			}
+		}
     }
 
     private var title: some View {
         HStack(spacing: 4) {
             Group {
                 Text("\(model.title.capitalized)")
-                Text("(\(model.nfts.count))")
+                Text("(\(model.nftIDs.count))")
+				Spacer()
             }
             .font(.system(size: 17, weight: .bold))
             .foregroundStyle(.ypBlack)
@@ -60,16 +72,9 @@ struct NFTCollectionCellView: View {
 			id: UUID(),
 			title: "unum reque",
 			imageURL: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Обложки_коллекций/White.png")!,
-			nfts: [],
+			nftIDs: [],
 			description: "dictas ...",
-			author: .init(
-				id: UUID(),
-		  name: "Jimmie Reilly",
-		  description: "daddsd",
-		  nfts: [],
-		  websiteURL: URL(string: "https://student7.students.practicum.org")!,
-		  avatarURL: URL(string: "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/594.jpg")!
-	  )
+			authorID: UUID()
 		)
 	)
 	.frame(width: 300, height: 500)
