@@ -12,7 +12,7 @@ struct NFTCollectionModel: Identifiable, Equatable {
 	let id: UUID
 	let title: String
     let imageURL: URL
-    let nfts: [NFTModel]
+	let nftIDs: [NFTModel.ID]
     let description: String
-    let author: NFTUserModel
+	let authorID: NFTUserModel.ID
 }

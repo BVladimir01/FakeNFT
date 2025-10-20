@@ -10,11 +10,12 @@ import Foundation
 
 struct NFTModel: Identifiable, Equatable {
 	let id: UUID
+	let authorID: NFTUserModel.ID
 	let name: String
 	let imageURL: URL
 	let rating: Int
 	let price: Double
 	let currency: Currency
-	var isFavourite: Bool?
-	var isAddedToCart: Bool?
+	var isFavourite: Bool = false
+	var isAddedToCart: Bool = false
 }
