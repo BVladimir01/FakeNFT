@@ -30,34 +30,9 @@ struct FavoriteNFTCell: View {
                 Text("April")
                     .foregroundColor(.ypBlack)
                     .font(Font(UIFont.bodyBold))
-                HStack(spacing: 2) {
-                    
-                    Image(systemName: "star.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(height: 12)
-                        .foregroundColor(.ypUYellow)
-                    Image(systemName: "star.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(height: 12)
-                        .foregroundColor(.ypUYellow)
-                    Image(systemName: "star.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(height: 12)
-                        .foregroundColor(.ypUYellow)
-                    Image(systemName: "star.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(height: 12)
-                        .foregroundColor(.ypLightGrey)
-                    Image(systemName: "star.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(height: 12)
-                        .foregroundColor(.ypLightGrey)
-                }
+               
+                RatingView(Int.random(in: 1...5))
+                
                 HStack(spacing: 4) {
                     Text("1,78 ETH")
                         .foregroundColor(.ypBlack)
