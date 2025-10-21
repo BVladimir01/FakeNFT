@@ -7,8 +7,11 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct NFTCardView: View {
+
+	@State private var shouldUseErrorImage = false
 
 	private let name: String
 	private let imageURL: URL?
@@ -58,27 +61,13 @@ struct NFTCardView: View {
 		.frame(width: imageSize)
 	}
 
-	var nftImage: some View {
-		AsyncImage(url: imageURL) { phase in
-			let errorImage = Image(systemName: "exclamationmark.triangle.fill")
-				.resizable()
-				.scaledToFit()
-			switch phase {
-			case .empty:
-				VStack(spacing: .zero) {
-					Spacer()
-					ProgressView()
-						.tint(.ypBlack)
-					Spacer()
-				}
-			case .success(let image):
-				image
-					.resizable()
-					.scaledToFill()
-			case .failure:
+	@ViewBuilder
+	private var nftImage: some View {
+		Group {
+			if shouldUseErrorImage {
 				errorImage
-			@unknown default:
-				errorImage
+			} else {
+				kfImage
 			}
 		}
 		.frame(width: imageSize, height: imageSize)
@@ -91,7 +80,36 @@ struct NFTCardView: View {
 		}
 	}
 
-	var nftDetails: some View {
+	private var kfImage: some View {
+		KFImage(imageURL)
+			.resizable()
+			.placeholder { progress in
+				placeholder(progressFraction: progress.fractionCompleted)
+			}
+			.onFailure { _ in
+				// onFailureImage not working
+				shouldUseErrorImage = true
+			}
+			.scaledToFill()
+	}
+
+	private func placeholder(progressFraction: Double) -> some View {
+		VStack(spacing: .zero) {
+			Spacer()
+			ProgressView(value: progressFraction)
+				.tint(.ypBlack)
+			Spacer()
+		}
+	}
+
+	private var errorImage: some View {
+		Image(systemName: "exclamationmark.triangle.fill")
+			.resizable()
+			.scaledToFit()
+			.foregroundStyle(.ypBlack)
+	}
+
+	private var nftDetails: some View {
 		VStack(alignment: .leading, spacing: 4) {
 			RatingView(rating)
 			HStack(spacing: .zero) {
