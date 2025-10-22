@@ -17,3 +17,18 @@ extension View {
         background(NavigationControllerIntrospection(callback: callback))
     }
 }
+
+// MARK: - UIViewControllerRepresentable
+struct NavigationControllerIntrospection: UIViewControllerRepresentable {
+    var callback: (UINavigationController) -> Void
+    func makeUIViewController(context: Context) -> UIViewController {
+        let controller = UIViewController()
+        DispatchQueue.main.async {
+            if let navigationController = controller.navigationController {
+                callback(navigationController)
+            }
+        }
+        return controller
+    }
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}

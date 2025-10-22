@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "" : {
-
-    },
     "%@ (%lld)" : {
       "localizations" : {
         "en" : {
@@ -169,6 +166,7 @@
       }
     },
     "Joaquin Phoenix" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

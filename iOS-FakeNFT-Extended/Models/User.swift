@@ -8,20 +8,20 @@
 import SwiftUI
 
 struct User: Codable, Identifiable, Sendable, Equatable {
-    let name: String
-    let avatar: URL?
-    let description: String?
-    let website: URL?
+    var name: String
+    var avatar: URL?
+    var description: String?
+    var website: URL?
     let nfts: [String]
     let rating: String?
     let id: String
-    let likes: [String]? // ОПЦИОНАЛЬНЫЙ для GET
+    var likes: [String]? // ОПЦИОНАЛЬНЫЙ для GET
 
     var ratingValue: Int {
         nfts.count
     }
 
-    var likesArray: [String] {
+    var likesArray: [String] { // TODO: Может убрать?
         likes ?? []
     }
     static func == (lhs: User, rhs: User) -> Bool {

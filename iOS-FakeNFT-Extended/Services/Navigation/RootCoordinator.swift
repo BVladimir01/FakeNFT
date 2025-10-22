@@ -11,7 +11,7 @@ import SwiftUI
 	func show(cover type: Cover)
 }
 
-protocol RootCoordinator: CoverShowerCoordinator {
+protocol RootCoordinator: CoverShowerCoordinator, ObservableObject {
     // MARK: - Props:
 	var activeCover: Cover? { get }
 	var navigationPath: [Screen] { get set }

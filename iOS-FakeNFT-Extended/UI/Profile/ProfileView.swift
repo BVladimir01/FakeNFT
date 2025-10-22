@@ -8,26 +8,26 @@
 import SwiftUI
 
 struct ProfileView: View {
-    let viewModel: ProfileViewModel
+    @ObservedObject var viewModel: ProfileViewModel
+    let coordinator: RootCoordinatorImpl
     var body: some View {
         VStack(alignment: .leading) {
-            if let user = viewModel.user {
+            if let user = viewModel.user { // TODO: заменить на стейты
                 ProfileInfo(user: user)
-                
                 if let website = user.website {
+                    // TODO: Добавить переход на веб вью
                     Text(website.absoluteString)
                         .lineLimit(1)
                         .foregroundColor(.ypUBlue)
                         .padding(.top, 8)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                
-                navButton(title: "Мои NFT", count: user.nfts.count)
-                    .padding(.top, 40)
+                navButton(title: "Мои NFT", count: user.nfts.count).padding(.top, 40)
                 navButton(title: "Избранные NFT", count: user.likes?.count ?? 0)
                 Spacer()
             } else {
-                ProgressView() // TODO: Заменить на LoadingView(), добавить стейты
+                // TODO: Заменить на LoadingView()
+                ProgressView()
             }
         }
         .padding(.horizontal)
@@ -53,7 +53,7 @@ struct ProfileView: View {
     // MARK: - SubViews:
     @ViewBuilder
     private func navButton(title: String, count: Int) -> some View {
-        Button(action: { print("Navigate to List") }) {
+        Button(action: {}) {
             HStack {
                 Text("\(title) (\(count))")
                     .font(Font(UIFont.bodyBold))
@@ -70,9 +70,11 @@ struct ProfileView: View {
     NavigationStack {
         ProfileView(
             viewModel: ProfileViewModel(
-                profileService: ProfileServiceImpl(networkClient: DefaultNetworkClient()
+                profileService: ProfileServiceImpl(
+                    networkClient: DefaultNetworkClient()
                 )
-            )
+            ),
+            coordinator: RootCoordinatorImpl()
         )
     }
 }

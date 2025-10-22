@@ -8,95 +8,98 @@
 import SwiftUI
 
 struct ProfileEditView: View {
-    let coordinator: RootCoordinatorImpl
-    @State private var name = "Joaquin Phoenix"
-    @State private var description = "Дизайнер из Казани, люблю цифровое искусство и бейглы."
-    @State private var siteUrlString: String = "https://hello.com"
-    @State private var showContextMenu: Bool = false
-    @State private var showSiteEditAlert: Bool = false
-    @State private var avatarUrlString: String = "https://i.ibb.co/fVLFtWrM/c1f8f42c5f5bd684e27d93131dc6ffd4696cdfd3.jpg" // не могу сделать короче строку сейчас
-    @State private var newAvatarUrlString: String = ""
-    @State private var isSaveInProgress: Bool = false
-    @State private var wantExitHasChanges: Bool = false
+    @ObservedObject var viewModel: ProfileViewModel
+    @ObservedObject var coordinator: RootCoordinatorImpl
     @Environment(\.dismiss) private var dismiss
+
     var body: some View {
         VStack(spacing: 24) {
-            ProfileImage(imageUrl: URL(string: avatarUrlString) ?? nil, canEdit: true) {
-                showContextMenu = true
+            ProfileImage(
+                imageUrl: viewModel.editingUser?.avatar,
+                canEdit: true
+            ) {
+                viewModel.showContextMenu()
             }
-            .actionSheet(isPresented: $showContextMenu) {
+            .actionSheet(isPresented: $viewModel.needToShowContextMenu) {
                 ActionSheet(
-                    title: Text("Фото профиля"),
+                    title: Text(NSLocalizedString("Фото профиля", comment: "")),
                     buttons: [
-                        .default(Text("Изменить фото")) {
-                            showSiteEditAlert = true
+                        .default(Text(NSLocalizedString("Изменить фото", comment: ""))) {
+                            viewModel.showSiteEditAlert()
                         },
-                        .destructive(Text("Удалить фото")) {
-                            avatarUrlString = ""
+                        .destructive(Text(NSLocalizedString("Удалить фото", comment: ""))) {
+                            viewModel.deleteAvatar()
                         },
-                        .cancel(Text("Отмена"))
+                        .cancel(Text(NSLocalizedString("Отмена", comment: "")))
                     ]
                 )
             }
-            .alert("Ссылка на фото", isPresented: $showSiteEditAlert) {
-                TextField(avatarUrlString, text: $newAvatarUrlString)
-                    .keyboardType(.URL)
-                Button("Отмена") {
-                    showSiteEditAlert = false
-                    newAvatarUrlString = ""
+            .alert(NSLocalizedString("Ссылка на фото", comment: ""), isPresented: $viewModel.needToshowSiteEditAlert) {
+                TextField(
+                    NSLocalizedString("Ссылка на фото", comment: ""),
+                    text: viewModel.avatarBinding
+                )
+                .keyboardType(.URL)
+                Button(NSLocalizedString("Отмена", comment: "")) {
+                    viewModel.hideSiteEditAlert()
+                    viewModel.setAvatarToDefault()
                 }
-                Button("Сохранить") {
-                    avatarUrlString = newAvatarUrlString
-                }
-            }
-            .alert("Уверены,\nчто хотите выйти?", isPresented: $wantExitHasChanges) {
-                Button("Остаться") {
-                    // TODO: Cancel action
-                    print("Cancel")
-                }
-                Button("Выйти") {
-                    // TODO: Exit action
-                    print("Exit")
+                Button(NSLocalizedString("Сохранить", comment: "")) {
+                    viewModel.applyAvatarUrl()
+                    viewModel.hideSiteEditAlert()
                 }
             }
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Имя")
-                    .font(Font(UIFont.headline3))
-                TextField("Joaquin Phoenix", text: $name)
-                    .applyTextInputStyle()
-                    .onChange(of: name) {
-                        coordinator.showSaveButton()
-                    } // TODO: потом поменяю логику, это для демо
+            .alert(NSLocalizedString("Уверены,\nчто хотите выйти?", comment: ""), isPresented: $viewModel.wantExitHasChanges) {
+                Button(NSLocalizedString("Остаться", comment: "")) {
+                    viewModel.cancelExit()
+                }
+                Button(NSLocalizedString("Выйти", comment: "")) {
+                    viewModel.setUserToDefault()
+                    coordinator.goBack()
+                }
             }
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Описание")
-                    .font(Font(UIFont.headline3))
-                TextEditor(text: $description)
-                    .applyTextInputStyle()
-                    .scrollContentBackground(.hidden)
-                    .onChange(of: description) {
-                        coordinator.showSaveButton()
-                    } // TODO: потом поменяю логику, это для демо
-            }
-            .frame(minHeight: 40, maxHeight: 155)
-            .fixedSize(horizontal: false, vertical: true)
             
             VStack(alignment: .leading, spacing: 8) {
-                Text("Сайт")
+                Text(NSLocalizedString("Имя", comment: ""))
                     .font(Font(UIFont.headline3))
-                TextField("", text: $siteUrlString)
-                    .applyTextInputStyle()
-                    .onChange(of: siteUrlString) {
-                        coordinator.showSaveButton()
-                    } // TODO: потом поменяю логику, это для демо
+                TextField(
+                    NSLocalizedString("Имя", comment: ""),
+                    text: viewModel.nameBinding
+                )
+                .applyTextInputStyle()
             }
+            
+            VStack(alignment: .leading, spacing: 8) {
+                Text(NSLocalizedString("Описание", comment: ""))
+                    .font(Font(UIFont.headline3))
+                TextEditor(text: viewModel.descriptionBinding)
+                    .applyTextInputStyle()
+                    .scrollContentBackground(.hidden)
+                    .frame(minHeight: 40, maxHeight: 155)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            
+            VStack(alignment: .leading, spacing: 8) {
+                Text(NSLocalizedString("Сайт", comment: ""))
+                    .font(Font(UIFont.headline3))
+                TextField(
+                    NSLocalizedString("Сайт", comment: ""),
+                    text: viewModel.websiteBinding
+                )
+                .applyTextInputStyle()
+            }
+            
             Spacer()
         }
         .frame(maxWidth: .infinity)
         .overlay(alignment: .bottom) {
             SaveButtonView(
-                isVisible: coordinator.shouldShowSaveButton,
-                onSave: { print("Saved") }
+                isVisible: viewModel.shouldShowSaveButton,
+                onSave: {
+                    Task {
+                        await viewModel.saveProfile()
+                    }
+                }
             )
         }
         .overlay {
@@ -108,47 +111,35 @@ struct ProfileEditView: View {
                     .scaleEffect(1.3)
                     .colorScheme(.light)
             }
-            .opacity(isSaveInProgress ? 1 : 0)
+            .opacity(viewModel.isSaveInProgress ? 1 : 0)
         }
         .padding(.horizontal)
         .background(Color.ypWhite)
-        .navigationBarBackButtonHidden(true) /// Может это лучше убрать, пока оставлю
-        .introspectNavigationController { navigationController in /// Отключаем стандартный жест свайпа назад
-            navigationController.interactivePopGestureRecognizer?.isEnabled = false
-        }
+        .navigationBarBackButtonHidden(true)
         .gesture(
             DragGesture(minimumDistance: 30, coordinateSpace: .global)
-            .onEnded { value in
-                if value.translation.width > 50 {
-                    // TODO: Тут нужна проверка, поменялись ли даннные, если нет то пропустим
-                    wantExitHasChanges = true
+                .onEnded { value in
+                    if value.translation.width > 50 {
+                        viewModel.checkExit()
+                    }
                 }
-            }
         )
         .onAppear {
-            coordinator.hideSaveButton()
-        }
-    }
-}
-
-// MARK: - UIViewControllerRepresentable
-struct NavigationControllerIntrospection: UIViewControllerRepresentable {
-    var callback: (UINavigationController) -> Void
-    func makeUIViewController(context: Context) -> UIViewController {
-        let controller = UIViewController()
-        DispatchQueue.main.async {
-            if let navigationController = controller.navigationController {
-                callback(navigationController)
+            Task {
+                await viewModel.loadProfile()
             }
         }
-        return controller
     }
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
 #Preview {
-    NavigationView {
+    NavigationStack {
         ProfileEditView(
+            viewModel: ProfileViewModel(
+                profileService: ProfileServiceImpl(
+                    networkClient: DefaultNetworkClient()
+                )
+            ),
             coordinator: RootCoordinatorImpl()
         )
     }
