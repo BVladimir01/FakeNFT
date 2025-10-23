@@ -58,7 +58,6 @@ struct ProfileEditView: View {
                     coordinator.goBack()
                 }
             }
-            
             VStack(alignment: .leading, spacing: 8) {
                 Text(NSLocalizedString("Имя", comment: ""))
                     .font(Font(UIFont.headline3))
@@ -68,7 +67,6 @@ struct ProfileEditView: View {
                 )
                 .applyTextInputStyle()
             }
-            
             VStack(alignment: .leading, spacing: 8) {
                 Text(NSLocalizedString("Описание", comment: ""))
                     .font(Font(UIFont.headline3))
@@ -78,7 +76,6 @@ struct ProfileEditView: View {
                     .frame(minHeight: 40, maxHeight: 155)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            
             VStack(alignment: .leading, spacing: 8) {
                 Text(NSLocalizedString("Сайт", comment: ""))
                     .font(Font(UIFont.headline3))
@@ -88,7 +85,6 @@ struct ProfileEditView: View {
                 )
                 .applyTextInputStyle()
             }
-            
             Spacer()
         }
         .frame(maxWidth: .infinity)

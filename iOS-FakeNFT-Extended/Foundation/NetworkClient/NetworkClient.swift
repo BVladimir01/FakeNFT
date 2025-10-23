@@ -56,10 +56,7 @@ actor DefaultNetworkClient: NetworkClient {
         urlRequest.httpMethod = request.httpMethod.rawValue
 
         if let dto = request.dto {
-            if let profileDTO = dto as? ProfileUpdateDTO {
-                urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-                urlRequest.httpBody = profileDTO.toFormURLEncoded()
-            } else if let dtoEncoded = try? encoder.encode(dto) {
+            if let dtoEncoded = try? encoder.encode(dto) {
                 urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 urlRequest.httpBody = dtoEncoded
             }

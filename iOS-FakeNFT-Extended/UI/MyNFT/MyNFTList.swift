@@ -36,13 +36,10 @@ struct MyNFTList: View {
                         title: Text("Сортировка"),
                         buttons: [
                             .default(Text("По цене")) {
-                                
                             },
                             .default(Text("По рейтингу")) {
-                                
                             },
                             .default(Text("По названию")) {
-                                
                             },
                             .cancel(Text("Закрыть"))
                         ]
