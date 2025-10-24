@@ -12,7 +12,9 @@ enum Screen: Hashable {
 	case payment(coordinator: any CartCoordinator, action: () -> Void)
 	case successPayment(action: () -> Void)
 	case web(url: URL)
-    case profile
+    case myNfts
+    case favorites
+    case profileEdit
 
 	static func == (lhs: Screen, rhs: Screen) -> Bool {
 		switch (lhs, rhs) {
@@ -20,7 +22,9 @@ enum Screen: Hashable {
 			case (.payment, .payment): true
 			case (.web, .web): true
 			case (.successPayment, .successPayment): true
-            case (.profile, .profile): true
+            case (.myNfts, .myNfts): true
+            case (.favorites, .favorites): true
+            case (.profileEdit, .profileEdit): true
 			default: false
 		}
 	}
@@ -35,8 +39,12 @@ enum Screen: Hashable {
 				hasher.combine(2)
 			case .successPayment:
 				hasher.combine(3)
-            case .profile:
+            case .myNfts:
                 hasher.combine(4)
+            case .favorites:
+                hasher.combine(5)
+            case .profileEdit:
+                hasher.combine(6)
 		}
 	}
 }

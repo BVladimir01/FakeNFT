@@ -51,10 +51,3 @@ struct MyNFTCell: View {
         }
     }
 }
-
-//#Preview {
-//    LightDarkPreviewWrapper {
-//        MyNFTCell()
-//            .padding(.horizontal)
-//    }
-//}

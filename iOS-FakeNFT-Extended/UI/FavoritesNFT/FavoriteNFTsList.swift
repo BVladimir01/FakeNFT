@@ -10,7 +10,7 @@ import SwiftUI
 
 struct FavoriteNFTsList: View {
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject var viewModel: ProfileViewModel
+    @EnvironmentObject var viewModel: ProfileViewModel
     var body: some View {
         ScrollView {
             if let likedNfts = viewModel.likedNfts { // TODO: Заменить на стейт
@@ -56,27 +56,5 @@ struct FavoriteNFTsList: View {
         }, message: {
             Text(viewModel.errorMessage ?? "Не удалось получить данные")
         })
-    }
-}
-
-#Preview {
-    NavigationView {
-        LightDarkPreviewWrapper {
-            NavigationLink(
-                destination: FavoriteNFTsList(
-                    viewModel: ProfileViewModel(
-                        profileService: ProfileServiceImpl(
-                            networkClient: DefaultNetworkClient()
-                        ),
-                        nftsService: NftServiceImpl(
-                            networkClient: DefaultNetworkClient(),
-                            storage: NftStorageImpl()
-                        )
-                    )
-                )
-            ) {
-                Text("Test")
-            }
-        }
     }
 }

@@ -10,7 +10,7 @@ import SwiftUI
 
 struct MyNFTList: View {
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject var viewModel: ProfileViewModel
+    @EnvironmentObject var viewModel: ProfileViewModel
     var body: some View {
         ScrollView {
             if let myNfts = viewModel.myNfts {
@@ -73,13 +73,3 @@ struct MyNFTList: View {
         })
     }
 }
-
-//#Preview {
-//    NavigationView {
-//        LightDarkPreviewWrapper {
-//            NavigationLink(destination: MyNFTList(viewModel: ProfileViewModel(profileService: ProfileServiceImpl(), nftsService: NftServiceImpl()))) {
-//                Text("Test")
-//            }
-//        }
-//    }
-//}

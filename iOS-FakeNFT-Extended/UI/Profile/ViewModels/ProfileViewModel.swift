@@ -10,8 +10,8 @@ import SwiftUI
 @MainActor
 @Observable
 final class ProfileViewModel: ObservableObject {
-    private let profileService: ProfileServiceImpl
-    private let nftService: NftServiceImpl
+    private let profileService: any ProfileService
+    private let nftService: any NftService
     private(set) var user: User?
     private(set) var editingUser: User?
     private(set) var isSaveInProgress: Bool = false
@@ -24,7 +24,7 @@ final class ProfileViewModel: ObservableObject {
     var needToshowSiteEditAlert: Bool = false
     var shouldShowSaveButton: Bool = false
     var temporaryAvatarUrl: String = ""
-    init(profileService: ProfileServiceImpl, nftsService: NftServiceImpl) {
+    init(profileService: any ProfileService, nftsService: any NftService) {
         self.profileService = profileService
         self.nftService = nftsService
     }

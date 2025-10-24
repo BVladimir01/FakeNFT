@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct ProfileEditView: View {
-    @ObservedObject var viewModel: ProfileViewModel
-    @ObservedObject var coordinator: RootCoordinatorImpl
+    @EnvironmentObject var viewModel: ProfileViewModel
+    @State var coordinator: any ProfileCoordinator
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -125,22 +125,5 @@ struct ProfileEditView: View {
                 await viewModel.loadProfile()
             }
         }
-    }
-}
-
-#Preview {
-    NavigationStack {
-        ProfileEditView(
-            viewModel: ProfileViewModel(
-                profileService: ProfileServiceImpl(
-                    networkClient: DefaultNetworkClient()
-                ),
-                nftsService: NftServiceImpl(
-                    networkClient: DefaultNetworkClient(),
-                    storage: NftStorageImpl()
-                )
-            ),
-            coordinator: RootCoordinatorImpl()
-        )
     }
 }

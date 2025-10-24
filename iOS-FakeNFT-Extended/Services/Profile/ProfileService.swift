@@ -27,7 +27,6 @@ final class ProfileServiceImpl: ProfileService {
         let request = ProfileRequest(httpMethod: .get)
         return try await networkClient.send(request: request)
     }
-    /// обновляем только профиль, без лайков
     func saveProfile(_ user: User) async throws -> User {
         let dto = ProfileUpdateDTO(
             name: user.name,
@@ -39,11 +38,9 @@ final class ProfileServiceImpl: ProfileService {
         let request = ProfileRequest(httpMethod: .put, dto: dto)
         return try await networkClient.send(request: request)
     }
-    /// проверка на изменения пользователя
     func hasChanges(original: User, current: User) -> Bool {
         original != current
     }
-    /// для обновления только состояния лайкнутых nft
     func updateLikes(to likes: [String]) async throws -> User {
         let dto = ProfileUpdateDTO(
             name: nil,
