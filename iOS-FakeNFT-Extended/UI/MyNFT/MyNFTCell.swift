@@ -6,46 +6,35 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct MyNFTCell: View {
+    let nft: NftEntity
+    let author: String?
+    let onLikeTap: () -> Void
     var body: some View {
         HStack(spacing: 0) {
-            AsyncImage(url: URL(string: "https://i.yapx.ru/a4wfK.png")!) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 108, height: 108)
-                    .cornerRadius(12)
-            } placeholder: {}
-            .aspectRatio(contentMode: .fit)
-            .overlay(alignment: .topTrailing) {
-                Image(.active)
-                    .foregroundColor(.ypUWhite)
-                    .onTapGesture {
-                        // TODO: тут сервис избранных отработает
-                    }
-            }
+            KFImage(nft.imageURLs.first)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 108, height: 108)
+                .cornerRadius(12)
+                .aspectRatio(contentMode: .fit)
+                .overlay(alignment: .topTrailing) {
+                    Image(.active)
+                        .foregroundColor(.ypUWhite)
+                        .onTapGesture(perform: onLikeTap)
+                }
             VStack(alignment: .leading, spacing: 5) {
-                Text("April")
+                Text(nft.name)
                     .foregroundColor(.ypBlack)
                     .font(Font(UIFont.bodyBold))
-                HStack(spacing: 2) {
-                    Image(systemName: "star.fill")
-                        .foregroundColor(.ypUYellow)
-                    Image(systemName: "star.fill")
-                        .foregroundColor(.ypUYellow)
-                    Image(systemName: "star.fill")
-                        .foregroundColor(.ypUYellow)
-                    Image(systemName: "star.fill")
-                        .foregroundColor(.ypLightGrey)
-                    Image(systemName: "star.fill")
-                        .foregroundColor(.ypLightGrey)
-                }
+                RatingView(nft.rating)
                 HStack(spacing: 4) {
                     Text("ОТ")
                         .foregroundColor(.ypBlack)
                         .font(Font(UIFont.caption1))
-                    Text("John Doe")
+                    Text("\(author == nil ? "Не указано" : author!)")
                         .foregroundColor(.ypBlack)
                         .font(Font(UIFont.caption2))
                 }
@@ -55,7 +44,7 @@ struct MyNFTCell: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Цена")
                     .font(Font(UIFont.caption2))
-                Text("1,78 ETH")
+                Text("\(String(format: "%.2f", nft.price)) ETH")
                     .font(Font(UIFont.bodyBold))
             }
             .foregroundColor(.ypBlack)
@@ -63,9 +52,9 @@ struct MyNFTCell: View {
     }
 }
 
-#Preview {
-    LightDarkPreviewWrapper {
-        MyNFTCell()
-            .padding(.horizontal)
-    }
-}
+//#Preview {
+//    LightDarkPreviewWrapper {
+//        MyNFTCell()
+//            .padding(.horizontal)
+//    }
+//}

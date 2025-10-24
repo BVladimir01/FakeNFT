@@ -9,27 +9,25 @@
 import SwiftUI
 
 struct FavoriteNFTsList: View {
-    @State private var showContextMenu: Bool = false
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject var viewModel: ProfileViewModel
     var body: some View {
         ScrollView {
-            LazyVGrid(columns: [
-                GridItem(.flexible(), spacing: 7),
-                GridItem(.flexible(), spacing: 7)
-            ], spacing: 20) {
-                ForEach(1..<7) { id in
-                    FavoriteNFTCell(nft: NftEntity(
-                        id: "\(id)",
-                        name: "Name",
-                        images: [URL(string: "https://i.yapx.ru/a4wfK.png")!],
-                        rating: 3,
-                        descriptionText: "tralalelo tralala",
-                        price: 1.2,
-                        authorURL: URL(string: "https://gracious_noether.fakenfts.org/")!)
-                    ) {}
+            if let likedNfts = viewModel.likedNfts { // TODO: Заменить на стейт
+                LazyVGrid(columns: [
+                    GridItem(.flexible(), spacing: 7),
+                    GridItem(.flexible(), spacing: 7)
+                ], spacing: 20) {
+                    ForEach(likedNfts) { nft in
+                        FavoriteNFTCell(nft: nft) {
+                            // TODO: тап на лайк
+                        }
+                    }
                 }
+                .padding(20)
+            } else { // TODO: Заменить на стейт + LoadingView()
+                ProgressView()
             }
-            .padding(20)
         }
         .navigationTitle("Мои NFT")
         .navigationBarBackButtonHidden(true)
@@ -41,14 +39,42 @@ struct FavoriteNFTsList: View {
                 .foregroundColor(.ypBlack)
             }
         }
+        .frame(maxWidth: .infinity)
         .background(Color.ypWhite)
+        .task {
+            await viewModel.loadLikedNFTs()
+        }
+        .alert("Ошибка", isPresented: .constant(viewModel.errorMessage != nil), actions: {
+            Button("Отмена", role: .cancel) {
+                viewModel.clearError()
+            }
+            Button("Повторить") {
+                Task {
+                    await viewModel.loadLikedNFTs()
+                }
+            }
+        }, message: {
+            Text(viewModel.errorMessage ?? "Не удалось получить данные")
+        })
     }
 }
 
 #Preview {
     NavigationView {
         LightDarkPreviewWrapper {
-            NavigationLink(destination: FavoriteNFTsList()) {
+            NavigationLink(
+                destination: FavoriteNFTsList(
+                    viewModel: ProfileViewModel(
+                        profileService: ProfileServiceImpl(
+                            networkClient: DefaultNetworkClient()
+                        ),
+                        nftsService: NftServiceImpl(
+                            networkClient: DefaultNetworkClient(),
+                            storage: NftStorageImpl()
+                        )
+                    )
+                )
+            ) {
                 Text("Test")
             }
         }

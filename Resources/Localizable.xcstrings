@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@" : {
+
+    },
     "%@ (%lld)" : {
       "localizations" : {
         "en" : {
@@ -43,10 +46,8 @@
         }
       }
     },
-    "1,78 ETH" : {
-
-    },
     "April" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -200,6 +201,7 @@
       }
     },
     "John Doe" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -431,6 +433,9 @@
         }
       }
     },
+    "Ошибка" : {
+
+    },
     "По названию" : {
       "localizations" : {
         "en" : {
@@ -478,6 +483,9 @@
           }
         }
       }
+    },
+    "Повторить" : {
+
     },
     "Сайт" : {
       "localizations" : {

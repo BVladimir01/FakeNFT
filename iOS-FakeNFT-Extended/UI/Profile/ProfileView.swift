@@ -22,8 +22,13 @@ struct ProfileView: View {
                         .padding(.top, 8)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                navButton(title: "Мои NFT", count: user.nfts.count).padding(.top, 40)
-                navButton(title: "Избранные NFT", count: user.likes?.count ?? 0)
+                NavigationLink(destination: MyNFTList(viewModel: viewModel)) {
+                    navButton(title: "Мои NFT", count: user.nfts.count)
+                }
+                .padding(.top, 40)
+                NavigationLink(destination: FavoriteNFTsList(viewModel: viewModel)) {
+                    navButton(title: "Избранные NFT", count: user.likes?.count ?? 0)
+                }
                 Spacer()
             } else {
                 // TODO: Заменить на LoadingView()
@@ -45,6 +50,7 @@ struct ProfileView: View {
             }
         }
         .toolbarRole(.editor)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.ypWhite)
         .task {
             await viewModel.loadProfile()
@@ -67,14 +73,24 @@ struct ProfileView: View {
 }
 
 #Preview {
-    NavigationStack {
-        ProfileView(
-            viewModel: ProfileViewModel(
-                profileService: ProfileServiceImpl(
-                    networkClient: DefaultNetworkClient()
+    NavigationView {
+        LightDarkPreviewWrapper {
+            NavigationLink(
+                destination: ProfileView(
+                    viewModel: ProfileViewModel(
+                        profileService: ProfileServiceImpl(
+                            networkClient: DefaultNetworkClient()
+                        ),
+                        nftsService: NftServiceImpl(
+                            networkClient: DefaultNetworkClient(),
+                            storage: NftStorageImpl()
+                        )
+                    ),
+                    coordinator: RootCoordinatorImpl()
                 )
-            ),
-            coordinator: RootCoordinatorImpl()
-        )
+            ) {
+                Text("Test")
+            }
+        }
     }
 }

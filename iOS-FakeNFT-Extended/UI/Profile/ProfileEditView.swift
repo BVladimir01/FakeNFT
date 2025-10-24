@@ -134,6 +134,10 @@ struct ProfileEditView: View {
             viewModel: ProfileViewModel(
                 profileService: ProfileServiceImpl(
                     networkClient: DefaultNetworkClient()
+                ),
+                nftsService: NftServiceImpl(
+                    networkClient: DefaultNetworkClient(),
+                    storage: NftStorageImpl()
                 )
             ),
             coordinator: RootCoordinatorImpl()
