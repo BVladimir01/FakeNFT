@@ -34,7 +34,8 @@ final class ProfileViewModel: ObservableObject {
             self.user = try await profileService.loadProfile()
             self.editingUser = user
         } catch {
-            print("Failed to load profile: \(error)")
+            print("❌ Failed to load profile: \(error)")
+			self.errorMessage = "Не удалось получить данные"
         }
     }
     private func loadNfts(for ids: [String]) async throws -> [NftEntity] {
@@ -95,15 +96,14 @@ final class ProfileViewModel: ObservableObject {
 			let updatedUser = try await profileService.saveProfile(editingUser)
 			self.user = updatedUser
 			self.editingUser = updatedUser
-			print("Профиль успешно сохранён")
 		} catch {
-			print("Ошибка сохранения профиля: \(error)")
+			print("❌ Ошибка сохранения профиля: \(error)")
 			errorMessage = "Не удалось сохранить профиль"
 		}
 	}
 	func updateProfile(with data: ProfileEditData) async {
 		guard var editingUser = editingUser else { return }
-		editingUser.name = data.name
+editingUser.name = data.name
 		editingUser.description = data.description.isEmpty ? nil : data.description
 		editingUser.website = URL(string: data.website)
 		editingUser.avatar = data.avatarURL

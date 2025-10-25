@@ -9,11 +9,22 @@ import Foundation
 
 // MARK: - Requests
 struct ProfileRequest: NetworkRequest {
-    var endpoint: URL? {
-        URL(string: "\(RequestConstants.baseURL)/api/v1/profile/1")
-    }
-    var httpMethod: HttpMethod
-    var dto: (any Encodable)?
+	var endpoint: URL? {
+		URL(string: "\(RequestConstants.baseURL)/api/v1/profile/1")
+	}
+	var httpMethod: HttpMethod
+	let dto: Data?
+	
+	init(httpMethod: HttpMethod, dto: Data? = nil) {
+		self.httpMethod = httpMethod
+		self.dto = dto
+	}
+}
+
+struct ProfileFormRequest: NetworkRequest {
+	let endpoint: URL?
+	let httpMethod: HttpMethod = .put
+	let dto: Data?
 }
 
 // MARK: - Service
@@ -35,21 +46,32 @@ final class ProfileServiceImpl: ProfileService {
 			website: user.website?.absoluteString,
 			likes: nil
 		)
-		let request = ProfileRequest(httpMethod: .put, dto: dto)
+		
+		guard let formData = dto.toFormURLEncoded(),
+			  let url = URL(string: "\(RequestConstants.baseURL)/api/v1/profile/1") else {
+			throw URLError(.badURL)
+		}
+		
+		let request = ProfileFormRequest(endpoint: url, dto: formData)
 		return try await networkClient.send(request: request)
 	}
     func hasChanges(original: User, current: User) -> Bool {
         original != current
     }
-    func updateLikes(to likes: [String]) async throws -> User {
-        let dto = ProfileUpdateDTO(
-            name: nil,
-            avatar: nil,
-            description: nil,
-            website: nil,
-            likes: likes
-        )
-        let request = ProfileRequest(httpMethod: .put, dto: dto)
-        return try await networkClient.send(request: request)
-    }
+	func updateLikes(to likes: [String]) async throws -> User {
+		let dto = ProfileUpdateDTO(
+			name: nil,
+			avatar: nil,
+			description: nil,
+			website: nil,
+			likes: likes
+		)
+		
+		guard let formData = dto.toFormURLEncoded() else {
+			throw URLError(.badURL)
+		}
+		
+		let request = ProfileRequest(httpMethod: .put, dto: formData)
+		return try await networkClient.send(request: request)
+	}
 }
