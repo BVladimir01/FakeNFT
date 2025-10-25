@@ -26,8 +26,8 @@ final class ViewFactory {
 			EmptyView()
 		case .payment:
 			EmptyView()
-		case .web:
-			EmptyView()
+		case .web(let url):
+			WebView(url: url, isAppearenceEnabled: true)
 		case .successPayment:
 			EmptyView()
 		case .myNfts:

@@ -15,6 +15,7 @@ protocol ProfileCoordinator: AnyObject {
     func openMyNFTs()
     func openLikedNFTs()
     func openProfileEdit()
+	func openWebsite(url: URL)
     // MARK: - Covers
     func openUserAgreement()
     // MARK: - Состояние UI
@@ -41,4 +42,7 @@ final class ProfileCoordinatorImpl: ProfileCoordinator {
         guard let url = URL(string: "https://yandex.ru/legal/practicum_termsofuse") else { return }
         rootCoordinator.open(screen: .web(url: url))
     }
+	func openWebsite(url: URL) {
+		rootCoordinator.open(screen: .web(url: url))
+	}
 }

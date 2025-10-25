@@ -14,15 +14,17 @@ struct ProfileView: View {
         VStack(alignment: .leading) {
             if let user = viewModel.user { // TODO: заменить на стейты
                 ProfileInfo(user: user)
-                if let website = user.website {
-                    Button(action: {/* TODO: Добавить переход на веб вью */}) {
-                        Text(website.absoluteString)
-                            .lineLimit(1)
-                            .foregroundColor(.ypUBlue)
-                            .padding(.top, 8)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                }
+				if let website = user.website {
+					Button(action: {
+						coordinator.openWebsite(url: website)
+					}) {
+						Text(website.absoluteString)
+							.lineLimit(1)
+							.foregroundColor(.ypUBlue)
+							.padding(.top, 8)
+							.frame(maxWidth: .infinity, alignment: .leading)
+					}
+				}
                 Button(action: {/* TODO: nav - MyNFTList().env*/}) {
                     navButton(title: "Мои NFT", count: user.nfts.count)
                 }
