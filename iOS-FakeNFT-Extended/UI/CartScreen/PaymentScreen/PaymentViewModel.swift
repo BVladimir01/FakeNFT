@@ -10,7 +10,7 @@ import SwiftUI
 @MainActor
 @Observable
 final class PaymentViewModel {
-	let onSuccess: () -> Void
+	let onSuccess: () async throws -> Void
 	var isLoading = false
 	var isAlertPresented = false
 	var paymentMethods: [PaymentMethod] = []
@@ -18,41 +18,59 @@ final class PaymentViewModel {
 	var isButtonDisabled: Bool {
 		selectedMethod == nil || isLoading
 	}
-	private var saveSuccessAction: (() -> Void)?
 	private let paymentService: any PaymentService
+	private var lastAction: (() -> Void)?
 
-	init(paymentService: any PaymentService, onSuccess: @escaping () -> Void) {
+	init(paymentService: any PaymentService, onSuccess: @escaping () async throws -> Void) {
 		self.paymentService = paymentService
 		self.onSuccess = onSuccess
 	}
 
-	func load() async {
+	func load() {
+		guard paymentMethods.isEmpty else { return }
 		isLoading = true
-		do {
-			paymentMethods = try await paymentService.fetchPaymentMethods()
-		} catch {
-			print("Ошибка загрузки методов оплаты: \(error)")
-		}
-		isLoading = false
-	}
-
-	func pay(onSuccess: @escaping () -> Void) {
 		Task {
 			do {
-				try await paymentService.performPayment()
-				saveSuccessAction = nil
+				paymentMethods = try await paymentService.fetchPaymentMethods()
+				isLoading = false
+			} catch {
+				print("Ошибка загрузки методов оплаты: \(error)")
+				isLoading = false
+				lastAction = load
+				isAlertPresented = true
+			}
+		}
+	}
+
+	private var paymentSucceeded = false
+
+	func pay(onSuccess: @escaping () -> Void) {
+		isLoading = true
+		Task {
+			do {
+				guard let selectedMethod else { return }
+				if !paymentSucceeded {
+					try await paymentService.performPayment(with: selectedMethod)
+					paymentSucceeded = true
+				}
+				try await self.onSuccess()
+				lastAction = nil
+				isLoading = false
+				paymentSucceeded = false
 				onSuccess()
 			} catch {
 				print(error.localizedDescription)
-				saveSuccessAction = onSuccess
+				lastAction = { [weak self, onSuccess] in
+					self?.pay(onSuccess: onSuccess)
+				}
 				isAlertPresented = true
 			}
 		}
 	}
 
 	func repeatAction() {
-		guard let action = saveSuccessAction else { return }
-		pay(onSuccess: action)
+		isAlertPresented = false
+		lastAction?()
 	}
 
 	func select(_ method: PaymentMethod) {

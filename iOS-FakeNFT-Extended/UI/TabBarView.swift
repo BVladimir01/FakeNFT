@@ -50,6 +50,7 @@ struct TabBarView: View {
 				.onPreferenceChange(ToolbarButtonKey.self) { item in
 					toolbarButtons = item
 				}
+
 			}
 			if let cover = rootCoordinator.activeCover {
 				viewFactory.makeCoverView(for: cover)

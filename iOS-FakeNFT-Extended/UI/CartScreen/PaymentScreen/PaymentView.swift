@@ -22,9 +22,7 @@ struct PaymentView: View {
 	var body: some View {
 		ZStack {
 			Color.ypWhite.ignoresSafeArea()
-			if viewModel.isLoading {
-				ProgressView("Loading...")
-			} else {
+			if !viewModel.isLoading {
 				VStack {
 					LazyVGrid(columns: columns, spacing: 7) {
 						ForEach(viewModel.paymentMethods) { method in
@@ -51,7 +49,6 @@ struct PaymentView: View {
 						.font(.system(size: 13, weight: .regular))
 						Button("Оплатить") {
 							viewModel.pay {
-								viewModel.onSuccess()
 								coordinator.openSuccessPaymentScreen()
 							}
 						}
@@ -85,8 +82,15 @@ struct PaymentView: View {
 				}
 			}
 		}
+		.onChange(of: viewModel.isLoading) { _, newValue in
+			if newValue {
+				UIBlockingProgressHUD.show()
+			} else {
+				UIBlockingProgressHUD.dismiss()
+			}
+		}
 		.alert(
-			"Не далось произвести оплату",
+			"Не удалось произвести оплату",
 			isPresented: $viewModel.isAlertPresented,
 			actions: {
 				Button("Отмена", role: .cancel, action: {})
@@ -95,7 +99,7 @@ struct PaymentView: View {
 				}
 			})
 		.task {
-			await viewModel.load()
+			viewModel.load()
 		}
 	}
 }

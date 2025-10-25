@@ -6,15 +6,20 @@
 //
 
 import SwiftUI
-
 struct CartView: View {
 	@State var viewModel: CartViewModel
 	@State var coordinator: any CartCoordinator
 
+	init(viewModel: CartViewModel, coordinator: any CartCoordinator) {
+		self.viewModel = viewModel
+		self.coordinator = coordinator
+		print("INIT")
+	}
+
 	var body: some View {
 		Group {
-			if viewModel.items.isEmpty {
-				Text("У вас еще нет NFT")
+			if viewModel.items.isEmpty && !viewModel.isLoading {
+				Text("Корзина пуста")
 					.font(.system(size: 17, weight: .bold))
 					.foregroundStyle(.ypBlack)
 					.frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -43,15 +48,16 @@ struct CartView: View {
 						}
 					}
 					.listStyle(.plain)
-
-					FooterView(
-						totalCount: viewModel.items.count,
-						totalPrice: viewModel.total
-					) {
-						coordinator.openPayScreen(onSuccess: viewModel.clearCart)
+					if !viewModel.isLoading {
+						FooterView(
+							totalCount: viewModel.items.count,
+							totalPrice: viewModel.total
+						) {
+							coordinator.openPayScreen(onSuccess: viewModel.clearCart)
+						}
+						.toolbarPreference(imageName: .sort, action: viewModel.showSortDialog)
 					}
 				}
-				.toolbarPreference(imageName: .sort, action: viewModel.showSortDialog)
 			}
 		}
 		.background(.ypWhite, ignoresSafeAreaEdges: .all)
@@ -71,8 +77,15 @@ struct CartView: View {
 			}
 			Button("Отмена", role: .cancel) {}
 		}
+		.onChange(of: viewModel.isLoading) { _, newValue in
+			if newValue {
+				UIBlockingProgressHUD.show()
+			} else {
+				UIBlockingProgressHUD.dismiss()
+			}
+		}
 		.onAppear {
-			viewModel.updateItems()
+			viewModel.fetchItems()
 		}
 	}
 }
