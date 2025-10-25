@@ -20,6 +20,7 @@ final class ProfileViewModel: ObservableObject {
 	private(set) var errorMessage: String?
 	private(set) var isLoadingMyNFTs = false
 	private(set) var isLoadingLikedNFTs = false
+	private(set) var isTogglingLike = false
 	var wantToSortMyNft: Bool = false
 	init(profileService: any ProfileService, nftsService: any NftService) {
 		self.profileService = profileService
@@ -72,9 +73,9 @@ final class ProfileViewModel: ObservableObject {
 		}
 		isLoadingMyNFTs = true
 		defer { isLoadingMyNFTs = false }
-		
 		do {
 			self.myNfts = try await loadNfts(for: user.nfts)
+			self.sortMyNFTs(by: .name)
 			errorMessage = nil
 		} catch {
 			errorMessage = "Не удалось получить данные"
@@ -125,6 +126,9 @@ final class ProfileViewModel: ObservableObject {
 		user?.likes?.contains(nftId) == true
 	}
 	func toggleLike(nftId: String) async {
+		guard !isTogglingLike else { return }
+		isTogglingLike = true
+		defer { isTogglingLike = false }
 		guard var likes = user?.likes else { return }
 		if likes.contains(nftId) {
 			likes.removeAll { $0 == nftId }

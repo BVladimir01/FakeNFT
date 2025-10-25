@@ -13,6 +13,54 @@ struct MyNFTList: View {
 	@EnvironmentObject var viewModel: ProfileViewModel
 	@State private var togglingLikeId: String?
 	var body: some View {
+		ZStack {
+			contentView
+				.disabled(viewModel.isTogglingLike)
+			if viewModel.isTogglingLike {
+				Color.black.opacity(0.2)
+					.ignoresSafeArea()
+				ProgressView()
+					.scaleEffect(1.5)
+					.padding()
+					.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+			}
+		}
+		.navigationTitle("Мои NFT")
+		.navigationBarBackButtonHidden(true)
+		.toolbar {
+			ToolbarItem(placement: .topBarTrailing) {
+				Button(action: viewModel.showSortContextMenu) {
+					Image(.sort)
+				}
+				.foregroundColor(.ypBlack)
+				.disabled(viewModel.isTogglingLike)
+				.actionSheet(isPresented: $viewModel.wantToSortMyNft) {
+					sortActionSheet
+				}
+			}
+			ToolbarItem(placement: .topBarLeading) {
+				Button { dismiss() } label: {
+					Image(.chevronLeft)
+						.foregroundColor(.ypBlack)
+				}
+				.disabled(viewModel.isTogglingLike)
+			}
+		}
+		.background(Color.ypWhite)
+		.task {
+			await viewModel.loadMyNFTs()
+		}
+		.alert("Ошибка", isPresented: .constant(viewModel.errorMessage != nil)) {
+			Button("Отмена", role: .cancel) { viewModel.clearError() }
+			Button("Повторить") {
+				Task { await viewModel.loadMyNFTs() }
+			}
+		} message: {
+			Text(viewModel.errorMessage ?? "Не удалось получить данные")
+		}
+	}
+	@ViewBuilder
+	private var contentView: some View {
 		VStack {
 			if viewModel.isLoadingMyNFTs {
 				ProgressView()
@@ -28,6 +76,8 @@ struct MyNFTList: View {
 								onLikeTap: {
 									let id = nft.id
 									guard togglingLikeId != id else { return }
+									guard !viewModel.isTogglingLike else { return }
+									
 									togglingLikeId = id
 									Task {
 										await viewModel.toggleLike(nftId: id)
@@ -51,37 +101,6 @@ struct MyNFTList: View {
 					.frame(maxWidth: .infinity, maxHeight: .infinity)
 					.background(Color.ypWhite)
 			}
-		}
-		.navigationTitle("Мои NFT")
-		.navigationBarBackButtonHidden(true)
-		.toolbar {
-			ToolbarItem(placement: .topBarTrailing) {
-				Button(action: viewModel.showSortContextMenu) {
-					Image(.sort)
-				}
-				.foregroundColor(.ypBlack)
-				.actionSheet(isPresented: $viewModel.wantToSortMyNft) {
-					sortActionSheet
-				}
-			}
-			ToolbarItem(placement: .topBarLeading) {
-				Button { dismiss() } label: {
-					Image(.chevronLeft)
-						.foregroundColor(.ypBlack)
-				}
-			}
-		}
-		.background(Color.ypWhite)
-		.task {
-			await viewModel.loadMyNFTs()
-		}
-		.alert("Ошибка", isPresented: .constant(viewModel.errorMessage != nil)) {
-			Button("Отмена", role: .cancel) { viewModel.clearError() }
-			Button("Повторить") {
-				Task { await viewModel.loadMyNFTs() }
-			}
-		} message: {
-			Text(viewModel.errorMessage ?? "Не удалось получить данные")
 		}
 	}
 	// MARK: - Сортировка

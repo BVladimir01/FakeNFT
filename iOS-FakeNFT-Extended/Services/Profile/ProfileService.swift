@@ -46,10 +46,12 @@ final class ProfileServiceImpl: ProfileService {
 			website: user.website?.absoluteString,
 			likes: nil
 		)
+		
 		guard let formData = dto.toFormURLEncoded(),
 			  let url = URL(string: "\(RequestConstants.baseURL)/api/v1/profile/1") else {
 			throw URLError(.badURL)
 		}
+		
 		let request = ProfileFormRequest(endpoint: url, dto: formData)
 		return try await networkClient.send(request: request)
 	}
@@ -62,7 +64,7 @@ final class ProfileServiceImpl: ProfileService {
 			avatar: nil,
 			description: nil,
 			website: nil,
-			likes: likes.isEmpty ? nil : likes
+			likes: likes
 		)
 		
 		guard let formData = dto.toFormURLEncoded() else {
@@ -71,5 +73,11 @@ final class ProfileServiceImpl: ProfileService {
 		
 		let request = ProfileRequest(httpMethod: .put, dto: formData)
 		return try await networkClient.send(request: request)
+	}
+}
+
+extension Array where Element == String {
+	var urlEncodedLikes: String {
+		self.isEmpty ? "[]" : self.joined(separator: ",")
 	}
 }
