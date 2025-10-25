@@ -20,10 +20,13 @@ typealias ProfileSaveAction = (ProfileEditData) async -> Void
 typealias ProfileCancelAction = () -> Void
 
 struct ProfileEditView: View {
+	// MARK: - Входящие проперти
 	private let initialData: ProfileEditData
 	private let onSave: ProfileSaveAction
 	private let onCancel: ProfileCancelAction
 	private let coordinator: any ProfileCoordinator
+	
+	// MARK: - Локальная обработка
 	@State private var data: ProfileEditData
 	@State private var showAvatarMenu = false
 	@State private var showAvatarUrlAlert = false
@@ -42,14 +45,12 @@ struct ProfileEditView: View {
 		self.onCancel = onCancel
 		self.coordinator = coordinator
 	}
-	
 	private var hasChanges: Bool {
 		data.name != initialData.name ||
 		data.description != initialData.description ||
 		data.website != initialData.website ||
 		data.avatarURL?.absoluteString != initialData.avatarURL?.absoluteString
 	}
-	
     var body: some View {
         VStack(spacing: 24) {
 			HStack {
@@ -94,13 +95,6 @@ struct ProfileEditView: View {
 					avatarUrlInput = ""
                 }
             }
-            .alert(NSLocalizedString("Уверены,\nчто хотите выйти?", comment: ""), isPresented: $showExitAlert) {
-                Button(NSLocalizedString("Остаться", comment: "")) {}
-                Button(NSLocalizedString("Выйти", comment: "")) {
-					onCancel()
-					coordinator.goBack()
-                }
-            }
             VStack(alignment: .leading, spacing: 8) {
                 Text(NSLocalizedString("Имя", comment: ""))
                     .font(Font(UIFont.headline3))
@@ -111,7 +105,7 @@ struct ProfileEditView: View {
                 .applyTextInputStyle()
             }
             VStack(alignment: .leading, spacing: 8) {
-                Text(NSLocalizedString("Описание", comment: ""))
+                Text("Описание")
                     .font(Font(UIFont.headline3))
                 TextEditor(text: $data.description)
                     .applyTextInputStyle()
@@ -165,7 +159,15 @@ struct ProfileEditView: View {
                     }
                 }
         )
+		.alert(NSLocalizedString("Уверены,\nчто хотите выйти?", comment: ""), isPresented: $showExitAlert) {
+			Button(NSLocalizedString("Остаться", comment: "")) {}
+			Button(NSLocalizedString("Выйти", comment: "")) {
+				onCancel()
+				coordinator.goBack()
+			}
+		}
     }
+	// MARK: - Локальная обработка
 	private func exitEditing() {
 		if hasChanges {
 			showExitAlert = true
