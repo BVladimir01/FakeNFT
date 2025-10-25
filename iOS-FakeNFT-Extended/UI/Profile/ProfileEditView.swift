@@ -138,9 +138,11 @@ struct ProfileEditView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity)
+		.disabled(isSaving)
+		.allowsHitTesting(!isSaving)
         .overlay(alignment: .bottom) {
             SaveButtonView(
-                isVisible: hasChanges,
+                isVisible: hasChanges && !isSaving,
                 onSave: {
                     Task {
 						await onSave(data)
@@ -158,12 +160,13 @@ struct ProfileEditView: View {
                     .colorScheme(.light)
             }
 			.opacity(isSaving ? 1 : 0)
+			.allowsHitTesting(false)
         }
         .padding(.horizontal)
         .background(Color.ypWhite)
         .navigationBarBackButtonHidden(true)
         .gesture(
-            DragGesture(minimumDistance: 30, coordinateSpace: .global)
+			isSaving ? nil : DragGesture(minimumDistance: 30, coordinateSpace: .global)
                 .onEnded { value in
                     if value.translation.width > 50 {
                         exitEditing()
