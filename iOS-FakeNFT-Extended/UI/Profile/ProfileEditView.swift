@@ -18,13 +18,14 @@ struct ProfileEditData {
 // MARK: - Клоужеры
 typealias ProfileSaveAction = (ProfileEditData) async -> Void
 typealias ProfileCancelAction = () -> Void
+typealias ProfileDismissAction = () -> Void
 
 struct ProfileEditView: View {
 	// MARK: - Входящие проперти
 	private let initialData: ProfileEditData
 	private let onSave: ProfileSaveAction
 	private let onCancel: ProfileCancelAction
-	private let coordinator: any ProfileCoordinator
+	private let onDismiss: ProfileDismissAction
 	
 	// MARK: - Локальная обработка
 	@State private var data: ProfileEditData
@@ -37,13 +38,13 @@ struct ProfileEditView: View {
 		initialData: ProfileEditData,
 		onSave: @escaping ProfileSaveAction,
 		onCancel: @escaping ProfileCancelAction,
-		coordinator: any ProfileCoordinator
+		onDismiss: @escaping ProfileDismissAction
 	) {
 		self.initialData = initialData
 		self._data = State(initialValue: initialData)
 		self.onSave = onSave
 		self.onCancel = onCancel
-		self.coordinator = coordinator
+		self.onDismiss = onDismiss
 	}
 	private var hasChanges: Bool {
 		data.name != initialData.name ||
@@ -163,7 +164,7 @@ struct ProfileEditView: View {
 			Button(NSLocalizedString("Остаться", comment: "")) {}
 			Button(NSLocalizedString("Выйти", comment: "")) {
 				onCancel()
-				coordinator.goBack()
+				onDismiss()  // ← вместо coordinator.goBack()
 			}
 		}
     }
@@ -173,7 +174,7 @@ struct ProfileEditView: View {
 			showExitAlert = true
 		} else {
 			onCancel()
-			coordinator.goBack()
+			onDismiss()
 		}
 	}
 }

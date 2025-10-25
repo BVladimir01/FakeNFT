@@ -39,10 +39,6 @@ final class ViewFactory {
 			//            FavoriteNFTsList()
 			//                .environmentObject(profileViewModel)
 		case .profileEdit:
-			let profileCoordinator = ProfileCoordinatorImpl(
-				rootCoordinator: rootCoordinator,
-				profileViewModel: profileViewModel
-			)
 			ProfileEditView(
 				initialData: ProfileEditData(
 					name: self.profileViewModel.editingUser?.name ?? "",
@@ -56,11 +52,13 @@ final class ViewFactory {
 				onCancel: {
 					self.profileViewModel.cancelEditing()
 				},
-				coordinator: profileCoordinator
+				onDismiss: {
+					self.rootCoordinator.goBack()
+				}
 			)
 		}
 	}
-	
+
 	// сюда вроде бы кроме корзины никто ничего не добавляет,
 	// но мне эта заготовка нужна в корне проекта
 	// в теории можно добавлять свои экраны, которые
@@ -74,7 +72,7 @@ final class ViewFactory {
 			EmptyView()
 		}
 	}
-	
+
 	@ViewBuilder
 	func makeTabView(for tab: Tab) -> some View {
 		switch tab {
