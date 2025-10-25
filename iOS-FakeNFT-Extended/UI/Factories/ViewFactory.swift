@@ -46,15 +46,9 @@ final class ViewFactory {
 					website: self.profileViewModel.editingUser?.website?.absoluteString ?? "",
 					avatarURL: self.profileViewModel.editingUser?.avatar
 				),
-				onSave: { editedData in
-					await self.profileViewModel.updateProfile(with: editedData)
-				},
-				onCancel: {
-					self.profileViewModel.cancelEditing()
-				},
-				onDismiss: {
-					self.rootCoordinator.goBack()
-				},
+				onSave: { editedData in await self.profileViewModel.updateProfile(with: editedData) },
+				onCancel: { self.profileViewModel.cancelEditing() },
+				onDismiss: { self.rootCoordinator.goBack() },
 				isSaving: self.profileViewModel.isSaveInProgress
 			)
 		}

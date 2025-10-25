@@ -10,7 +10,7 @@ import SwiftUI
 @MainActor
 @Observable
 final class ProfileViewModel: ObservableObject {
-    private let profileService: any ProfileService
+	@ObservationIgnored private let profileService: any ProfileService
     private let nftService: any NftService
     private(set) var user: User?
     private(set) var editingUser: User?
@@ -19,7 +19,6 @@ final class ProfileViewModel: ObservableObject {
     private(set) var likedNfts: [NftEntity]? = []
     private(set) var errorMessage: String?
     var wantToSortMyNft: Bool = false
-    var temporaryAvatarUrl: String = ""
     init(profileService: any ProfileService, nftsService: any NftService) {
         self.profileService = profileService
         self.nftService = nftsService
