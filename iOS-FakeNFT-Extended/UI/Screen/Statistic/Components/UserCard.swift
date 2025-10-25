@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct UserCard: View {
-
     enum Constants {
         static let titleButton = "Перейти на сайт пользователя"
         static let safeTop: CGFloat = 20
@@ -46,12 +45,12 @@ struct UserCard: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .multilineTextAlignment(.leading)
                 .padding(.trailing, Constants.profileTrailingFix)
-            OpenWebsiteButton(
-                title: Constants.titleButton,
-                font: Font(UIFont.caption1),
-                textColor: .ypBlack,
-                color: Color(.systemBackground),
-                action: openWebsite)
+            Button(Constants.titleButton, action: openWebsite)
+                .buttonStyle(BorderedButtonStyle(
+                    font: Font(UIFont.caption1),
+                    textColor: .ypBlack,
+                    color: Color(.systemBackground)
+                ))
         }
         .padding(.trailing, Constants.bioTrailing)
     }
@@ -60,8 +59,8 @@ struct UserCard: View {
         List {
             NFTCollectionRow(user: MockData.users[7]) .listRowSeparator(.hidden)
         }
-            .listStyle(.plain)
-            .frame(maxWidth: .infinity)
+        .listStyle(.plain)
+        .frame(maxWidth: .infinity)
     }
 
     private func openWebsite() {
@@ -71,7 +70,7 @@ struct UserCard: View {
 
 #Preview("Light") {
     @Previewable @State var coordinator = RootCoordinatorImpl()
-    return NavigationStack (path: $coordinator.navigationPath) {
+    return NavigationStack(path: $coordinator.navigationPath) {
         UserCard(user: MockData.users[7])
             .tint(.ypBlack)
             .scrollContentBackground(.hidden)
@@ -90,7 +89,7 @@ struct UserCard: View {
 
 #Preview("Dark") {
     @Previewable @State var coordinator = RootCoordinatorImpl()
-    return NavigationStack (path: $coordinator.navigationPath) {
+    return NavigationStack(path: $coordinator.navigationPath) {
         UserCard(user: MockData.users[7])
             .tint(.ypBlack)
             .scrollContentBackground(.hidden)
