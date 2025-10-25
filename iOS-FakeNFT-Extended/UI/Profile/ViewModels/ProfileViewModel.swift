@@ -126,13 +126,11 @@ final class ProfileViewModel: ObservableObject {
 	}
 	func toggleLike(nftId: String) async {
 		guard var likes = user?.likes else { return }
-		
 		if likes.contains(nftId) {
 			likes.removeAll { $0 == nftId }
 		} else {
 			likes.append(nftId)
 		}
-		
 		do {
 			let updatedUser = try await profileService.updateLikes(to: likes)
 			self.user = updatedUser

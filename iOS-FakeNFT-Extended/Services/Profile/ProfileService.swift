@@ -27,7 +27,7 @@ struct ProfileFormRequest: NetworkRequest {
 	let dto: Data?
 }
 
-// MARK: - Service
+// MARK: - Servic
 @MainActor
 final class ProfileServiceImpl: ProfileService {
     private let networkClient: any NetworkClient
@@ -46,12 +46,10 @@ final class ProfileServiceImpl: ProfileService {
 			website: user.website?.absoluteString,
 			likes: nil
 		)
-		
 		guard let formData = dto.toFormURLEncoded(),
 			  let url = URL(string: "\(RequestConstants.baseURL)/api/v1/profile/1") else {
 			throw URLError(.badURL)
 		}
-		
 		let request = ProfileFormRequest(endpoint: url, dto: formData)
 		return try await networkClient.send(request: request)
 	}
@@ -64,7 +62,7 @@ final class ProfileServiceImpl: ProfileService {
 			avatar: nil,
 			description: nil,
 			website: nil,
-			likes: likes
+			likes: likes.isEmpty ? nil : likes
 		)
 		
 		guard let formData = dto.toFormURLEncoded() else {

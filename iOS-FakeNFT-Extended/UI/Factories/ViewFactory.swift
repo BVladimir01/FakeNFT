@@ -42,7 +42,8 @@ final class ViewFactory {
 		case .successPayment:
 			EmptyView()
 		case .myNfts:
-			MyNFTList(viewModel: profileViewModel)
+			MyNFTList()
+				.environmentObject(profileViewModel)
 		case .favorites:
 			EmptyView()
 		case .profileEdit:
