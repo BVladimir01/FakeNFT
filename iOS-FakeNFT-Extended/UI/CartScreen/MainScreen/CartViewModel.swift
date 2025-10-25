@@ -13,10 +13,10 @@ import Observation
 		case name, price, rating
 	}
 
-	var total: Double { items.map(\.price).reduce(0, +) }
-	var items: [CartItem] = []
-	var isLoading: Bool = false
 	var isSortMenuShowing: Bool = false
+	var total: Double { items.map(\.price).reduce(0, +) }
+	private(set) var items: [CartItem] = []
+	private(set) var isLoading: Bool = false
 
 	private let cartService: any CartService
 	private static let sortTypeKey = "cart_sort_type"
@@ -61,12 +61,6 @@ import Observation
 		isLoading = false
 	}
 
-	func updateItems() {
-		Task {
-			try await cartService.updateOrder(with: items.map(\.id))
-		}
-	}
-
 	func remove(_ item: CartItem) {
 		items.removeAll { $0.id == item.id }
 		updateItems()
@@ -85,6 +79,12 @@ import Observation
 				items.sort(by: { $0.price < $1.price })
 			case .rating:
 				items.sort(by: { $0.rating > $1.rating })
+		}
+	}
+
+	private func updateItems() {
+		Task {
+			try await cartService.updateOrder(with: items.map(\.id))
 		}
 	}
 

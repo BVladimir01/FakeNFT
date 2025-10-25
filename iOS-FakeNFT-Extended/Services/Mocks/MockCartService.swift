@@ -9,30 +9,25 @@ import SwiftUI
 
 actor MockCartService: CartService {
 	static let shared = MockCartService()
+
+	var items: [CartItem] = [.mock1, .mock2]
+	var isUpdateOrderCalled = false
+	var updateOrderSendedItemIds: [NftId]?
+
 	func fetchOrderItems() async throws -> [CartItem] {
-		print("fetch")
+		try await Task.sleep(for: .milliseconds(250))
+		if Task.isCancelled {
+			throw URLError(.cancelled)
+		}
+		print("OK")
 		return items
 	}
 
 	func updateOrder(with items: [NftId]) async throws {
-
+		updateOrderSendedItemIds = items
 	}
 
-	var items =
-		[
-			CartItem(
-				id: "1",
-				image: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Pink/Calder/1.png")!,
-				name: "Edmund Flowers",
-				rating: 1,
-				price: 21.27
-			),
-			CartItem(
-				id: "2",
-				image: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Pink/Calder/1.png")!,
-				name: "Edmund Flowers",
-				rating: 3,
-				price: 21.27
-			)
-		]
+	func setItems(_ items: [CartItem]) {
+		self.items = items
+	}
 }
