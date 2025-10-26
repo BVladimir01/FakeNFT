@@ -12,6 +12,7 @@ struct NFTCollectionsListView: View {
 
     @State private var viewModel: NFTCollectionsListViewModel
     @State private var isSelectingSortingType = false
+	@State private var isShowingErrorAlert = false
 
 	private let coordinator: any CatalogCoordinatorProtocol
 
@@ -35,6 +36,21 @@ struct NFTCollectionsListView: View {
             .onAppear {
 				viewModel.fetchCollections(isInitialFetch: true)
             }
+			.alert(
+				NSLocalizedString("Catalog.Error", comment: ""),
+				isPresented: $isShowingErrorAlert
+			) {
+				Button { } label: {
+					Text(NSLocalizedString("Error.Cancel", comment: ""))
+						.font(.system(size: 17, weight: .regular))
+				}
+				Button {
+					viewModel.fetchCollections()
+				} label: {
+					Text(NSLocalizedString("Error.Repeat", comment: ""))
+						.font(.system(size: 17, weight: .bold))
+				}
+			}
 			.onChange(of: viewModel.state) { oldValue, newValue in
 				if newValue == .loading && oldValue == .empty {
 					UIBlockingProgressHUD.show()
