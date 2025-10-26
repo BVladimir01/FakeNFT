@@ -22,19 +22,27 @@ struct UserCard: View {
     }
 
     let user: User
-    @Environment(RootCoordinatorImpl.self) private var coordinator
+    @Environment(StatisticCoordinator.self) private var coordinator
 
     private var websiteURL: URL {
         user.website ?? MockWebsiteURL.url
     }
 
     var body: some View {
-        VStack(spacing: Constants.containerSpacing) {
-            bioContent
-            contentButton
+        ScrollView {
+            VStack(spacing: Constants.containerSpacing) {
+                bioContent
+                contentButton
+            }
+            .navigationBarBackButtonHidden()
+            .toolbar {
+                BackToolbar {
+                    coordinator.goBack()
+                }
+            }
+            .safeAreaPadding(.top, Constants.safeTop)
+            .safeAreaPadding(.leading, Constants.safeLeading)
         }
-        .safeAreaPadding(.top, Constants.safeTop)
-        .safeAreaPadding(.leading, Constants.safeLeading)
     }
 
     private var bioContent: some View {
@@ -56,11 +64,8 @@ struct UserCard: View {
     }
 
     private var contentButton: some View {
-        List {
-            NFTCollectionRow(user: MockData.users[7]) .listRowSeparator(.hidden)
-        }
-        .listStyle(.plain)
-        .frame(maxWidth: .infinity)
+        NFTCollectionRow(user: MockData.users[7]) .listRowSeparator(.hidden)
+            .frame(maxWidth: .infinity)
     }
 
     private func openWebsite() {
@@ -69,11 +74,10 @@ struct UserCard: View {
 }
 
 #Preview("Light") {
-    @Previewable @State var coordinator = RootCoordinatorImpl()
-    return NavigationStack(path: $coordinator.navigationPath) {
+    @Previewable @State var coordinator = StatisticCoordinator(rootCoordinator: RootCoordinatorImpl())
+    NavigationStack(path: coordinator.navigationPathBinding) {
         UserCard(user: MockData.users[7])
             .tint(.ypBlack)
-            .scrollContentBackground(.hidden)
             .preferredColorScheme(.light)
             .environment(coordinator)
             .navigationDestination(for: Screen.self) { screen in
@@ -88,11 +92,10 @@ struct UserCard: View {
 }
 
 #Preview("Dark") {
-    @Previewable @State var coordinator = RootCoordinatorImpl()
-    return NavigationStack(path: $coordinator.navigationPath) {
+    @Previewable @State var coordinator = StatisticCoordinator(rootCoordinator: RootCoordinatorImpl())
+    NavigationStack(path: coordinator.navigationPathBinding) {
         UserCard(user: MockData.users[7])
             .tint(.ypBlack)
-            .scrollContentBackground(.hidden)
             .preferredColorScheme(.dark)
             .environment(coordinator)
             .navigationDestination(for: Screen.self) { screen in
@@ -103,5 +106,38 @@ struct UserCard: View {
                         EmptyView()
                 }
             }
+    }
+}
+#Preview("Test") {
+    @Previewable @State var coordinator = StatisticCoordinator(rootCoordinator: RootCoordinatorImpl())
+
+    NavigationStack(path: coordinator.navigationPathBinding) {
+        UserCard(user: MockData.users[7])
+            .tint(.ypBlack)
+            .preferredColorScheme(.light)
+            .environment(coordinator)
+            .navigationDestination(for: Screen.self) { screen in
+                switch screen {
+                    case .web(let url):
+                        // Временный экран для отладки
+                        VStack {
+                            Text("WEB VIEW")
+                                .font(.title)
+                            Text("URL: \(url.absoluteString)")
+                                .foregroundColor(.red)
+                            Button("Назад") {
+                                coordinator.goBack()
+                            }
+                        }
+                    default:
+                        EmptyView()
+                }
+            }
+            .onAppear {
+                print("NavigationStack appeared")
+            }
+    }
+    .onAppear {
+        print("Preview coordinator path: \(coordinator.navigationPath)")
     }
 }

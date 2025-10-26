@@ -28,7 +28,9 @@ final class ViewFactory {
 				EmptyView()
 			case .successPayment:
 				EmptyView()
-		}
+            case .userCard(user: let user):
+                UserCard(user: user)
+        }
 	}
 
 	// сюда вроде бы кроме корзины никто ничего не добавляет,
@@ -55,7 +57,8 @@ final class ViewFactory {
 			case .profile:
 				EmptyView()
 			case .statistic:
-				EmptyView()
+				StatisticView()
+                    .environment(StatisticCoordinator.shared)
 		}
 	}
 }

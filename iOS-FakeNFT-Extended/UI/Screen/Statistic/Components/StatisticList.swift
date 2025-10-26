@@ -15,11 +15,15 @@ struct StatisticList: View {
 
     let users: [User]
     let sortOption: SortOption
+    let onUserTap: ((User) -> Void)
 
     var body: some View {
         List {
             ForEach(Array(users.enumerated()), id: \.1.id) { index, user in
                 UserRatingCell(ranking: index + 1, user: user)
+                    .onTapGesture {
+                        onUserTap(user)
+                    }
                     .listRowSeparator(.hidden)
                     .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
             }
@@ -34,11 +38,18 @@ struct StatisticList: View {
 #Preview("By Rating") {
     StatisticList(
         users: MockData.users.sorted { $0.ratingValue > $1.ratingValue },
-        sortOption: .byRating
+        sortOption: .byRating,
+        onUserTap: { user in
+            print("Tapped user: \(user.name)")
+        }
     )
 }
 #Preview("By Name") {
     StatisticList(
         users: MockData.users.sorted { $0.name < $1.name },
-        sortOption: .byName)
+        sortOption: .byName,
+        onUserTap: { user in
+            print("Tapped user: \(user.name)")
+        }
+    )
 }

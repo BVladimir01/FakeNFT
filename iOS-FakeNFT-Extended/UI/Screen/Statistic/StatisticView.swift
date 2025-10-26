@@ -6,6 +6,7 @@
 //
 import SwiftUI
 
+@MainActor
 struct StatisticView: View {
     @AppStorage(AppStorageKeys.statisticSortOption)
     private var sortRaw = StatisticList.SortOption.byRating.rawValue
@@ -16,17 +17,37 @@ struct StatisticView: View {
 
     @State private var showSortDialog = false
     @State private var viewModel = StatisticViewModel()
+    @State private var isNavigating = false
+
+    @Environment(StatisticCoordinator.self) private var coordinator
 
     var body: some View {
-        NavigationStack {
-            StatisticList(users: viewModel.sortedUsers, sortOption: viewModel.sortOption)
-                .toolbarPreference(imageName: .sort) { showSortDialog = true }
-                .toolbar(.visible, for: .navigationBar)
-                .confirmationDialog("Сортировка", isPresented: $showSortDialog, titleVisibility: .visible) {
-                    Button("По имени") { sortRaw = StatisticList.SortOption.byName.rawValue }
-                    Button("По рейтингу") { sortRaw = StatisticList.SortOption.byRating.rawValue }
-                    Button("Закрыть", role: .cancel) { }
+        NavigationStack(path: coordinator.navigationPathBinding){
+            StatisticList(
+                users: viewModel.sortedUsers,
+                sortOption: viewModel.sortOption,
+                onUserTap: { user in
+                    coordinator.open(screen: .userCard(user: user))
                 }
+            )
+            .toolbarPreference(imageName: .sort) { showSortDialog = true }
+            .toolbar(.visible, for: .navigationBar)
+            .confirmationDialog("Сортировка", isPresented: $showSortDialog, titleVisibility: .visible) {
+                Button("По имени") { sortRaw = StatisticList.SortOption.byName.rawValue }
+                Button("По рейтингу") { sortRaw = StatisticList.SortOption.byRating.rawValue }
+                Button("Закрыть", role: .cancel) { }
+            }
+            .navigationDestination(for: Screen.self) { screen in
+                switch screen {
+                    case .userCard(let user):
+                        UserCard(user: user)
+                            .environment(coordinator)
+                    case .web(let url):
+                        WebView(url: url, isAppearenceEnabled: false)
+                    default:
+                        EmptyView()
+                }
+            }
         }
         .onAppear { viewModel.makeSetSort(selectedSort) }
         .onChange(of: sortRaw) { _, _ in
