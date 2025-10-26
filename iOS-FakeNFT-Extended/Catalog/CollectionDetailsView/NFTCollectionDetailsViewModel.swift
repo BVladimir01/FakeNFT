@@ -12,33 +12,12 @@ import SwiftUI
 @MainActor
 final class NFTCollectionDetailsViewModel {
 
-	private let collectionDetailsService: any NFTCollectionDetailsServiceProtocol
-
 	let collection: NFTCollectionModel
-	var author: NFTUserModel?
-	var nfts: [NFTModel] = []
-	var hasError = false
-	var isLoading = false
+	private(set) var author: NFTUserModel?
+	private(set) var nfts: [NFTModel] = []
+	private(set) var state: State = .empty
 
-	private var state: State = .empty {
-		didSet {
-			hasError = false
-			isLoading = false
-			UIBlockingProgressHUD.dismiss()
-			switch state {
-			case .empty:
-				author = nil
-				nfts = []
-			case .loading:
-				isLoading = true
-				UIBlockingProgressHUD.show()
-			case .error:
-				hasError = true
-			case .loaded:
-				break
-			}
-		}
-	}
+	private let collectionDetailsService: any NFTCollectionDetailsServiceProtocol
 
 	init(
 		collection: NFTCollectionModel,
@@ -65,7 +44,7 @@ final class NFTCollectionDetailsViewModel {
 		}
 	}
 
-	func favoriteTapped(for nft: NFTModel) {
+	func updateFavoriteState(for nft: NFTModel) {
 		Task {
 			do {
 				guard state != .loading,
@@ -81,7 +60,7 @@ final class NFTCollectionDetailsViewModel {
 		}
 	}
 
-	func cartTapped(for nft: NFTModel) {
+	func updateCartState(for nft: NFTModel) {
 		Task {
 			do {
 				guard state != .loading,
@@ -99,7 +78,7 @@ final class NFTCollectionDetailsViewModel {
 
 }
 
-private extension NFTCollectionDetailsViewModel {
+extension NFTCollectionDetailsViewModel {
 	enum State: Equatable {
 		case empty, loading, error, loaded
 	}

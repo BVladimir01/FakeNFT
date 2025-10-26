@@ -13,9 +13,10 @@ struct NFTCollectionDetailsView: View {
 	private let coordinator: any CatalogCoordinatorProtocol
 
 	@State private var viewModel: NFTCollectionDetailsViewModel
+	@State private var isShowingErrorAlert = false
 
 	@Environment(\.dismiss) private var dismiss
-	let columns: [GridItem] = [
+	private let columns: [GridItem] = [
 		GridItem(.adaptive(minimum: 108))
 	]
 
@@ -38,7 +39,7 @@ struct NFTCollectionDetailsView: View {
 		self.viewModel = viewModel
 		self.coordinator = coordinator
 	}
-	
+
 	var body: some View {
 		ScrollView {
 			collectionImage
@@ -58,7 +59,10 @@ struct NFTCollectionDetailsView: View {
 			backButton
 		}
 		.toolbarBackground(.hidden, for: .navigationBar)
-		.alert(NSLocalizedString("CatalogDetails.Error", comment: ""), isPresented: $viewModel.hasError) {
+		.alert(
+			NSLocalizedString("CatalogDetails.Error", comment: ""),
+			isPresented: $isShowingErrorAlert
+		) {
 			Button { } label: {
 				Text(NSLocalizedString("Error.Cancel", comment: ""))
 					.font(.system(size: 17, weight: .regular))
@@ -68,6 +72,13 @@ struct NFTCollectionDetailsView: View {
 			} label: {
 				Text(NSLocalizedString("Error.Repeat", comment: ""))
 					.font(.system(size: 17, weight: .bold))
+			}
+		}
+		.onChange(of: viewModel.state) { _, newValue in
+			if newValue == .loading {
+				UIBlockingProgressHUD.show()
+			} else {
+				UIBlockingProgressHUD.dismiss()
 			}
 		}
 	}
@@ -115,10 +126,10 @@ struct NFTCollectionDetailsView: View {
 						isFavorite: nft.isFavourite,
 						isAddedToCart: nft.isAddedToCart,
 						onCartTap: {
-							viewModel.cartTapped(for: nft)
+							viewModel.updateCartState(for: nft)
 						},
 						onFavoriteTap: {
-							viewModel.favoriteTapped(for: nft)
+							viewModel.updateFavoriteState(for: nft)
 						}
 					)
 				}
