@@ -40,6 +40,7 @@ struct NFTCollectionRow: View {
             .background(Color.clear)
             .overlay(alignment: .trailing) {
                 chevronIcon
+                    .padding(.trailing, 16)
             }
     }
 
