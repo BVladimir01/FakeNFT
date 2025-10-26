@@ -13,7 +13,6 @@ import SwiftUI
 final class NFTCollectionDetailsViewModel {
 
 	private let collectionDetailsService: any NFTCollectionDetailsServiceProtocol
-	private let coordinator: any CatalogCoordinatorProtocol
 
 	let collection: NFTCollectionModel
 	var author: NFTUserModel?
@@ -43,12 +42,10 @@ final class NFTCollectionDetailsViewModel {
 
 	init(
 		collection: NFTCollectionModel,
-		collectionDetailsService: any NFTCollectionDetailsServiceProtocol,
-		coordinator: any CatalogCoordinatorProtocol
+		collectionDetailsService: any NFTCollectionDetailsServiceProtocol
 	) {
 		self.collection = collection
 		self.collectionDetailsService = collectionDetailsService
-		self.coordinator = coordinator
 		updateDetails()
 	}
 
@@ -66,11 +63,6 @@ final class NFTCollectionDetailsViewModel {
 				state = .error
 			}
 		}
-	}
-
-	func authorTapped() {
-		guard let url = author?.websiteURL else { return }
-		coordinator.showWebView(for: url)
 	}
 
 	func favoriteTapped(for nft: NFTModel) {

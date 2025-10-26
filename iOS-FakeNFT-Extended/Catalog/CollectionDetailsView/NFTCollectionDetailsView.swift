@@ -10,6 +10,8 @@ import SwiftUI
 
 struct NFTCollectionDetailsView: View {
 
+	private let coordinator: any CatalogCoordinatorProtocol
+
 	@State private var viewModel: NFTCollectionDetailsViewModel
 
 	@Environment(\.dismiss) private var dismiss
@@ -29,10 +31,14 @@ struct NFTCollectionDetailsView: View {
 		viewModel.author
 	}
 
-	init(viewModel: NFTCollectionDetailsViewModel) {
+	init(
+		viewModel: NFTCollectionDetailsViewModel,
+		coordinator: any CatalogCoordinatorProtocol
+	) {
 		self.viewModel = viewModel
+		self.coordinator = coordinator
 	}
-
+	
 	var body: some View {
 		ScrollView {
 			collectionImage
@@ -84,7 +90,8 @@ struct NFTCollectionDetailsView: View {
 				authorName: author?.name ?? "",
 				collectionDescription: collection.description,
 				onAuthorTap: {
-					viewModel.authorTapped()
+					guard let url = author?.websiteURL else { return }
+					coordinator.showWebView(for: url)
 				}
 			)
 			Spacer()
@@ -148,12 +155,12 @@ struct NFTCollectionDetailsView: View {
 	let service = NFTCollectionDetailsMockService(throwsError: false)
 	let viewModel = NFTCollectionDetailsViewModel(
 		collection: collection,
-		collectionDetailsService: service,
-		coordinator: catalogCoordinator
+		collectionDetailsService: service
 	)
 	NavigationStack {
 		NFTCollectionDetailsView(
-			viewModel: viewModel
+			viewModel: viewModel,
+			coordinator: catalogCoordinator
 		)
 	}
 }
@@ -172,12 +179,12 @@ struct NFTCollectionDetailsView: View {
 	let service = NFTCollectionDetailsMockService(throwsError: true)
 	let viewModel = NFTCollectionDetailsViewModel(
 		collection: collection,
-		collectionDetailsService: service,
-		coordinator: catalogCoordinator
+		collectionDetailsService: service
 	)
 	NavigationStack {
 		NFTCollectionDetailsView(
-			viewModel: viewModel
+			viewModel: viewModel,
+			coordinator: catalogCoordinator
 		)
 	}
 }

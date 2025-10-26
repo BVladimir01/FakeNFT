@@ -16,7 +16,7 @@ final class ViewFactory {
 	private let nftCollectionDetailsService: any NFTCollectionDetailsServiceProtocol
 
 	private lazy var catalogMainViewModel: NFTCollectionsListViewModel = {
-		NFTCollectionsListViewModel(collectionsProvider: nftCollectionsProvider, coordinator: catalogCoordinator)
+		NFTCollectionsListViewModel(collectionsProvider: nftCollectionsProvider)
 	}()
 
 	init(rootCoordinator: any RootCoordinator) {
@@ -39,13 +39,15 @@ final class ViewFactory {
 			WebView(url: url)
 		case .successPayment:
 			EmptyView()
-		case .collectionDetails(collection: let collection, coordinator: let coordinator):
+		case .collectionDetails(collection: let collection):
 			let viewModel = NFTCollectionDetailsViewModel(
 				collection: collection,
-				collectionDetailsService: NFTCollectionDetailsMockService(throwsError: false),
-				coordinator: coordinator
+				collectionDetailsService: NFTCollectionDetailsMockService(throwsError: false)
 			)
-			NFTCollectionDetailsView(viewModel: viewModel)
+			NFTCollectionDetailsView(
+				viewModel: viewModel,
+				coordinator: catalogCoordinator
+			)
 		}
 	}
 
@@ -67,7 +69,10 @@ final class ViewFactory {
 	func makeTabView(for tab: Tab) -> some View {
 		switch tab {
 		case .catalog:
-			NFTCollectionsListView(viewModel: catalogMainViewModel)
+			NFTCollectionsListView(
+				viewModel: catalogMainViewModel,
+				coordinator: catalogCoordinator
+			)
 		case .cart:
 			EmptyView()
 		case .profile:
