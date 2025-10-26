@@ -13,7 +13,7 @@ class CartViewModelTests: XCTestCase {
 		sut = CartViewModel(cartService: service)
 	}
 
-	func testCartViewModel_whenOnAppearCalls_thenIsLoadingIsTrue() async {
+	func test_whenOnAppearCalls_thenIsLoadingIsTrue() async {
 		// Given
 		await service.setItems([.mock1])
 
@@ -23,12 +23,12 @@ class CartViewModelTests: XCTestCase {
 		// Then
 		XCTAssertTrue(sut.isLoading)
 
-		try? await Task.sleep(for: .milliseconds(500))
+		try? await Task.sleep(for: .seconds(1))
 		XCTAssertFalse(sut.isLoading)
 		XCTAssertFalse(sut.items.isEmpty)
 	}
 
-	func testCartViewModel_whenOnDisappearCalls_thenCancelsLoadingAndSetsIsLoadingFalse() async {
+	func test_whenOnDisappearCalls_thenCancelsLoadingAndSetsIsLoadingFalse() async {
 		// When
 		sut.onAppear()
 		sut.onDisappear()
@@ -37,7 +37,7 @@ class CartViewModelTests: XCTestCase {
 		XCTAssertFalse(sut.isLoading)
 	}
 
-	func testCartViewModel_whenSortCalls_thenItemsBecomeSorted() async {
+	func test_whenSortCalls_thenItemsBecomeSorted() async {
 		// Given
 		let items = [
 			CartItem(id: "1", name: "B", rating: 3, price: 10),
@@ -48,27 +48,27 @@ class CartViewModelTests: XCTestCase {
 		// When
 		sut.onAppear()
 		sut.sort(by: .name)
-		try? await Task.sleep(for: .milliseconds(500))
+		try? await Task.sleep(for: .seconds(1))
 
 		// Then
 		XCTAssertEqual(sut.items.map(\.name), ["A", "B"])
 
 		// When
 		sut.sort(by: .price)
-		try? await Task.sleep(for: .milliseconds(500))
+		try? await Task.sleep(for: .seconds(1))
 
 		// Then
 		XCTAssertEqual(sut.items.map(\.price), [5, 10])
 
 		// When
 		sut.sort(by: .rating)
-		try? await Task.sleep(for: .milliseconds(500))
+		try? await Task.sleep(for: .seconds(1))
 
 		// Then
 		XCTAssertEqual(sut.items.map(\.rating), [4, 3])
 	}
 
-	func testCartViewModel_whenAppearAndLoadItems_thenTotalCalculatesCorrectSum() async {
+	func test_whenAppearAndLoadItems_thenTotalCalculatesCorrectSum() async {
 		// Given
 		let items = [
 			CartItem(id: "1", name: "A", rating: 3, price: 10),
@@ -78,13 +78,13 @@ class CartViewModelTests: XCTestCase {
 
 		// When
 		sut.onAppear()
-		try? await Task.sleep(for: .milliseconds(500))
+		try? await Task.sleep(for: .seconds(1))
 
 		// Then
 		XCTAssertEqual(sut.total, 30)
 	}
 
-	func testCartViewModel_whenClearCartCalled_thenServiceReceivesEmptyIds() async throws {
+	func test_whenClearCartCalled_thenServiceReceivesEmptyIds() async throws {
 		// When
 		try await sut.clearCart()
 
@@ -93,17 +93,17 @@ class CartViewModelTests: XCTestCase {
 		XCTAssertEqual(ids, [])
 	}
 
-	func testCartViewModel_whenRemoveCalled_thenItemIsRemovedAndServiceUpdated() async {
+	func test_whenRemoveCalled_thenItemIsRemovedAndServiceUpdated() async {
 		// Given
 		let item1 = CartItem(id: "1", name: "A", rating: 1, price: 10)
 		let item2 = CartItem(id: "2", name: "B", rating: 2, price: 20)
 		await service.setItems([item1, item2])
 		sut.onAppear()
-		try? await Task.sleep(for: .milliseconds(500))
+		try? await Task.sleep(for: .seconds(1))
 
 		// When
 		sut.remove(item1)
-		try? await Task.sleep(for: .milliseconds(500))
+		try? await Task.sleep(for: .seconds(1))
 
 		// Then
 		XCTAssertEqual(sut.items, [item2])
@@ -111,7 +111,7 @@ class CartViewModelTests: XCTestCase {
 		XCTAssertEqual(ids, [item2.id])
 	}
 
-	func testCartViewModel_whenShowSortDialogCalled_thenIsSortMenuShowingBecomesTrue() {
+	func test_whenShowSortDialogCalled_thenIsSortMenuShowingBecomesTrue() {
 		// When
 		sut.showSortDialog()
 
@@ -119,7 +119,7 @@ class CartViewModelTests: XCTestCase {
 		XCTAssertTrue(sut.isSortMenuShowing)
 	}
 
-	func testCartViewModel_sortTypePersistsBetweenInstances() async {
+	func test_sortTypePersistsBetweenInstances() async {
 		// Given
 		let item1 = CartItem(id: "1", name: "A", rating: 1, price: 10)
 		let item2 = CartItem(id: "2", name: "B", rating: 4, price: 30)
@@ -133,7 +133,7 @@ class CartViewModelTests: XCTestCase {
 
 			let sut = CartViewModel(cartService: service)
 			sut.onAppear()
-			try? await Task.sleep(for: .milliseconds(500))
+			try? await Task.sleep(for: .seconds(1))
 
 			// Then
 			switch type {

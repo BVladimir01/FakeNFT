@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-actor MockCartService: CartService {
+final actor MockCartService: CartService {
 	static let shared = MockCartService()
 
 	var items: [CartItem] = [.mock1, .mock2]
