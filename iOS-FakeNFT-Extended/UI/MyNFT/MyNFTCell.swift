@@ -53,21 +53,3 @@ struct MyNFTCell: View {
 		}
 	}
 }
-
-//#Preview {
-//	MyNFTCell(
-//		nft: NftEntity(
-//			id: "dsfsdf",
-//			name: "dsfsdfs",
-//			images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Blue/Bonnie/1.png")!],
-//			rating: 2,
-//			descriptionText: "dsfsdf",
-//			price: 1.2,
-//			authorURL: URL(string: "https://practicum.yandex.ru/go-advanced/")!
-//		),
-//		author: "Автор",
-//		isLiked: true,
-//		onLikeTap: { print("Лайк!")
-// }
-//	)
-//}

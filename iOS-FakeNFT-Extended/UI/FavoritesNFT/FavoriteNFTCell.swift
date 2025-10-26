@@ -48,21 +48,3 @@ struct FavoriteNFTCell: View {
 		.animation(.easeInOut(duration: 0.2), value: isToggling)
     }
 }
-
-//#Preview {
-//    LightDarkPreviewWrapper {
-//        FavoriteNFTCell(
-//            nft: NftEntity(
-//                id: "1",
-//                name: "April",
-//                images: [URL(string: "https://i.yapx.ru/a4wfK.png")!],
-//                rating: 4,
-//                descriptionText: "Description",
-//                price: 1.78,
-//                authorURL: URL(string: "https://example.com")!
-//            ),
-//            onLikeTap: {}
-//        )
-//        .padding(.horizontal)
-//    }
-//}
