@@ -8,8 +8,8 @@
 
 import Foundation
 
-extension NftEntity {
-	convenience init(from nft: Nft) {
+extension NFTEntity {
+	convenience init(from nft: NFT) {
 		self.init(
 			id: nft.id,
 			name: nft.name,

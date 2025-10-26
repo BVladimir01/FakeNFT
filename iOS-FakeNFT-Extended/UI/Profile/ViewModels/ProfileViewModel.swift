@@ -15,8 +15,8 @@ final class ProfileViewModel: ObservableObject {
 	private(set) var user: User?
 	private(set) var editingUser: User?
 	private(set) var isSaveInProgress: Bool = false
-	private(set) var myNfts: [NftEntity]? = []
-	private(set) var likedNfts: [NftEntity]? = []
+	private(set) var myNfts: [NFTEntity]? = []
+	private(set) var likedNfts: [NFTEntity]? = []
 	private(set) var errorMessage: String?
 	private(set) var isLoadingMyNFTs = false
 	private(set) var isLoadingLikedNFTs = false
@@ -41,21 +41,21 @@ final class ProfileViewModel: ObservableObject {
 			self.errorMessage = "Не удалось получить данные"
 		}
 	}
-	private func loadNfts(for ids: [String]) async throws -> [NftEntity] {
-		let nftModels = try await withThrowingTaskGroup(of: Nft.self, returning: [Nft].self) { @MainActor group in
+	private func loadNfts(for ids: [String]) async throws -> [NFTEntity] {
+		let nftModels = try await withThrowingTaskGroup(of: NFT.self, returning: [NFT].self) { @MainActor group in
 			for id in ids {
 				group.addTask {
 					try await self.nftService.loadNft(id: id)
 				}
 			}
-			var result: [Nft] = []
+			var result: [NFT] = []
 			for try await nft in group {
 				result.append(nft)
 			}
 			return result
 		}
 		return nftModels.map { nft in
-			NftEntity(
+			NFTEntity(
 				id: nft.id,
 				name: nft.name,
 				images: nft.images,

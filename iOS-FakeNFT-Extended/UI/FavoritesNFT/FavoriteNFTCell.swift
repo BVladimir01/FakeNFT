@@ -9,7 +9,7 @@ import SwiftUI
 import Kingfisher
 
 struct FavoriteNFTCell: View {
-    let nft: NftEntity
+    let nft: NFTEntity
 	let isToggling: Bool
     let onLikeTap: () -> Void
     var body: some View {
