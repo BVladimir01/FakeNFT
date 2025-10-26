@@ -108,36 +108,3 @@ struct UserCard: View {
             }
     }
 }
-#Preview("Test") {
-    @Previewable @State var coordinator = StatisticCoordinator(rootCoordinator: RootCoordinatorImpl())
-
-    NavigationStack(path: coordinator.navigationPathBinding) {
-        UserCard(user: MockData.users[7])
-            .tint(.ypBlack)
-            .preferredColorScheme(.light)
-            .environment(coordinator)
-            .navigationDestination(for: Screen.self) { screen in
-                switch screen {
-                    case .web(let url):
-                        // Временный экран для отладки
-                        VStack {
-                            Text("WEB VIEW")
-                                .font(.title)
-                            Text("URL: \(url.absoluteString)")
-                                .foregroundColor(.red)
-                            Button("Назад") {
-                                coordinator.goBack()
-                            }
-                        }
-                    default:
-                        EmptyView()
-                }
-            }
-            .onAppear {
-                print("NavigationStack appeared")
-            }
-    }
-    .onAppear {
-        print("Preview coordinator path: \(coordinator.navigationPath)")
-    }
-}
