@@ -6,66 +6,50 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct MyNFTCell: View {
-    var body: some View {
-        HStack(spacing: 0) {
-            AsyncImage(url: URL(string: "https://i.yapx.ru/a4wfK.png")!) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 108, height: 108)
-                    .cornerRadius(12)
-            } placeholder: {}
-            .aspectRatio(contentMode: .fit)
-            .overlay(alignment: .topTrailing) {
-                Image(.active)
-                    .foregroundColor(.ypUWhite)
-                    .onTapGesture {
-                        // TODO: тут сервис избранных отработает
-                    }
-            }
-            VStack(alignment: .leading, spacing: 5) {
-                Text("April")
-                    .foregroundColor(.ypBlack)
-                    .font(Font(UIFont.bodyBold))
-                HStack(spacing: 2) {
-                    Image(systemName: "star.fill")
-                        .foregroundColor(.ypUYellow)
-                    Image(systemName: "star.fill")
-                        .foregroundColor(.ypUYellow)
-                    Image(systemName: "star.fill")
-                        .foregroundColor(.ypUYellow)
-                    Image(systemName: "star.fill")
-                        .foregroundColor(.ypLightGrey)
-                    Image(systemName: "star.fill")
-                        .foregroundColor(.ypLightGrey)
-                }
-                HStack(spacing: 4) {
-                    Text("ОТ")
-                        .foregroundColor(.ypBlack)
-                        .font(Font(UIFont.caption1))
-                    Text("John Doe")
-                        .foregroundColor(.ypBlack)
-                        .font(Font(UIFont.caption2))
-                }
-            }
-            .padding(.leading, 20)
-            Spacer()
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Цена")
-                    .font(Font(UIFont.caption2))
-                Text("1,78 ETH")
-                    .font(Font(UIFont.bodyBold))
-            }
-            .foregroundColor(.ypBlack)
-        }
-    }
-}
-
-#Preview {
-    LightDarkPreviewWrapper {
-        MyNFTCell()
-            .padding(.horizontal)
-    }
+	let nft: NFTEntity
+	let author: String?
+	let isLiked: Bool
+	let onLikeTap: () -> Void
+	var body: some View {
+		HStack(spacing: 0) {
+			KFImage(nft.imageURLs.first)
+				.resizable()
+				.aspectRatio(contentMode: .fit)
+				.frame(width: 108, height: 108)
+				.cornerRadius(12)
+				.aspectRatio(contentMode: .fit)
+				.overlay(alignment: .topTrailing) {
+					Button(action: onLikeTap) {
+						Image(.active)
+							.foregroundColor(isLiked ? .ypURed : .ypUWhite)
+					}
+				}
+			VStack(alignment: .leading, spacing: 5) {
+				Text(nft.name)
+					.foregroundColor(.ypBlack)
+					.font(Font(UIFont.bodyBold))
+				RatingView(nft.rating)
+				HStack(spacing: 4) {
+					Text("ОТ")
+						.foregroundColor(.ypBlack)
+						.font(Font(UIFont.caption1))
+					Text("\(author == nil ? "Не указано" : author!)")
+						.foregroundColor(.ypBlack)
+						.font(Font(UIFont.caption2))
+				}
+			}
+			.padding(.leading, 20)
+			Spacer()
+			VStack(alignment: .leading, spacing: 2) {
+				Text("Цена")
+					.font(Font(UIFont.caption2))
+				Text("\(String(format: "%.2f", nft.price)) ETH")
+					.font(Font(UIFont.bodyBold))
+			}
+			.foregroundColor(.ypBlack)
+		}
+	}
 }

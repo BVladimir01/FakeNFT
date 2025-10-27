@@ -8,71 +8,63 @@
 import SwiftUI
 
 struct ProfileView: View {
-    let viewModel: ProfileViewModel
-    var body: some View {
-        VStack(alignment: .leading) {
-            if let user = viewModel.user {
-                ProfileInfo(user: user)
-                
-                if let website = user.website {
-                    Text(website.absoluteString)
-                        .lineLimit(1)
-                        .foregroundColor(.ypUBlue)
-                        .padding(.top, 8)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                
-                navButton(title: "Мои NFT", count: user.nfts.count)
-                    .padding(.top, 40)
-                navButton(title: "Избранные NFT", count: user.likes?.count ?? 0)
-                Spacer()
-            } else {
-                ProgressView() // TODO: Заменить на LoadingView(), добавить стейты
-            }
-        }
-        .padding(.horizontal)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                if let user = viewModel.user { // TODO: Заменить на стейт
-                    // TODO: Добавить переход на редактирование
-                    Button(action: { print("Edit Tapped!") }) {
-                        Image(systemName: "square.and.pencil")
-                            .resizable()
-                            .frame(width: 26.5, height: 26.5)
-                    }
-                    .foregroundColor(.ypBlack)
-                }
-            }
-        }
-        .toolbarRole(.editor)
-        .background(Color.ypWhite)
-        .task {
-            await viewModel.loadProfile()
-        }
-    }
-    // MARK: - SubViews:
-    @ViewBuilder
-    private func navButton(title: String, count: Int) -> some View {
-        Button(action: { print("Navigate to List") }) {
-            HStack {
-                Text("\(title) (\(count))")
-                    .font(Font(UIFont.bodyBold))
-                Spacer()
-                Image(systemName: "chevron.forward")
-            }
-            .foregroundColor(.ypBlack)
-            .padding(.vertical)
-        }
-    }
-}
-
-#Preview {
-    NavigationStack {
-        ProfileView(
-            viewModel: ProfileViewModel(
-                profileService: ProfileServiceImpl(networkClient: DefaultNetworkClient()
-                )
-            )
-        )
-    }
+	@State var viewModel: ProfileViewModel
+	let coordinator: any ProfileCoordinator
+	var body: some View {
+		VStack(alignment: .leading) {
+			if let user = viewModel.user {
+				ProfileInfo(user: user)
+				if let website = user.website {
+					Button {
+						coordinator.openWebsite(url: website)
+					} label: {
+						Text(website.absoluteString)
+							.lineLimit(1)
+							.foregroundColor(.ypUBlue)
+							.padding(.top, 8)
+							.frame(maxWidth: .infinity, alignment: .leading)
+					}
+				}
+				Button {
+					coordinator.openMyNFTs()
+				} label: {
+					navButton(title: "Мои NFT", count: user.nfts.count)
+				}
+				.padding(.top, 40)
+				Button {
+					coordinator.openLikedNFTs()
+				} label: {
+					navButton(title: "Избранные NFT", count: user.likes?.count ?? 0)
+				}
+				Spacer()
+			} else {
+				ProgressView()
+			}
+		}
+		.padding(.horizontal)
+		.toolbarPreference(
+			imageName: .squareAndPencil,
+			action: {
+				guard viewModel.user != nil else { return }
+				coordinator.openProfileEdit()
+			}
+		)
+		.frame(maxWidth: .infinity, maxHeight: .infinity)
+		.background(Color.ypWhite)
+		.task {
+			await viewModel.loadProfile()
+		}
+	}
+	// MARK: - SubViews:
+	@ViewBuilder
+	private func navButton(title: String, count: Int) -> some View {
+		HStack {
+			Text("\(title) (\(count))")
+				.font(Font(UIFont.bodyBold))
+			Spacer()
+			Image(systemName: "chevron.forward")
+		}
+		.foregroundColor(.ypBlack)
+		.padding(.vertical)
+	}
 }

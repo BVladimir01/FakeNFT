@@ -7,96 +7,147 @@
 
 import SwiftUI
 
+// MARK: - Интерфейс для редактирования
+struct ProfileEditData: Equatable {
+	var name: String
+	var description: String
+	var website: String
+	var avatarURL: URL?
+	static func == (lhs: ProfileEditData, rhs: ProfileEditData) -> Bool {
+		lhs.name == rhs.name &&
+		lhs.description == rhs.description &&
+		lhs.website == rhs.website &&
+		lhs.avatarURL?.absoluteString == rhs.avatarURL?.absoluteString
+	}
+}
+
+// MARK: - Клоужеры
+typealias ProfileSaveAction = (ProfileEditData) async -> Void
+typealias ProfileCancelAction = () -> Void
+typealias ProfileDismissAction = () -> Void
+
 struct ProfileEditView: View {
-    let coordinator: RootCoordinatorImpl
-    @State private var name = "Joaquin Phoenix"
-    @State private var description = "Дизайнер из Казани, люблю цифровое искусство и бейглы."
-    @State private var siteUrlString: String = "https://hello.com"
-    @State private var showContextMenu: Bool = false
-    @State private var showSiteEditAlert: Bool = false
-    @State private var avatarUrlString: String = "https://i.ibb.co/fVLFtWrM/c1f8f42c5f5bd684e27d93131dc6ffd4696cdfd3.jpg" // не могу сделать короче строку сейчас
-    @State private var newAvatarUrlString: String = ""
-    @State private var isSaveInProgress: Bool = false
-    @State private var wantExitHasChanges: Bool = false
-    @Environment(\.dismiss) private var dismiss
+	// MARK: - Входящие проперти
+	private let initialData: ProfileEditData
+	private let onSave: ProfileSaveAction
+	private let onCancel: ProfileCancelAction
+	private let onDismiss: ProfileDismissAction
+	private let isSaving: Bool
+	private let errorMessage: String?
+	
+	// MARK: - Локальная обработка
+	@State private var data: ProfileEditData
+	@State private var showAvatarMenu = false
+	@State private var showAvatarUrlAlert = false
+	@State private var avatarUrlInput = ""
+	@State private var showExitAlert = false
+	@State private var showErrorAlert = false
+	init(
+		initialData: ProfileEditData,
+		onSave: @escaping ProfileSaveAction,
+		onCancel: @escaping ProfileCancelAction,
+		onDismiss: @escaping ProfileDismissAction,
+		isSaving: Bool = false,
+		errorMessage: String? = nil
+	) {
+		self.initialData = initialData
+		self._data = State(initialValue: initialData)
+		self.onSave = onSave
+		self.onCancel = onCancel
+		self.onDismiss = onDismiss
+		self.isSaving = isSaving
+		self.errorMessage = errorMessage
+	}
+	private var hasChanges: Bool {
+		data.name != initialData.name ||
+		data.description != initialData.description ||
+		data.website != initialData.website ||
+		data.avatarURL?.absoluteString != initialData.avatarURL?.absoluteString
+	}
     var body: some View {
         VStack(spacing: 24) {
-            ProfileImage(imageUrl: URL(string: avatarUrlString) ?? nil, canEdit: true) {
-                showContextMenu = true
+			HStack {
+				Button(action: { exitEditing() }) {
+					Image(.chevronLeft)
+						.foregroundColor(.ypBlack)
+				}
+				Spacer()
+			}
+            ProfileImage(
+                imageUrl: data.avatarURL,
+                canEdit: true
+            ) {
+				showAvatarMenu = true
             }
-            .actionSheet(isPresented: $showContextMenu) {
+			.actionSheet(isPresented: $showAvatarMenu) {
                 ActionSheet(
-                    title: Text("Фото профиля"),
+                    title: Text(NSLocalizedString("Фото профиля", comment: "")),
                     buttons: [
-                        .default(Text("Изменить фото")) {
-                            showSiteEditAlert = true
+                        .default(Text(NSLocalizedString("Изменить фото", comment: ""))) {
+							avatarUrlInput = data.avatarURL?.absoluteString ?? ""
+							showAvatarUrlAlert = true
                         },
-                        .destructive(Text("Удалить фото")) {
-                            avatarUrlString = ""
+                        .destructive(Text(NSLocalizedString("Удалить фото", comment: ""))) {
+							data.avatarURL = nil
                         },
-                        .cancel(Text("Отмена"))
+                        .cancel(Text(NSLocalizedString("Отмена", comment: "")))
                     ]
                 )
             }
-            .alert("Ссылка на фото", isPresented: $showSiteEditAlert) {
-                TextField(avatarUrlString, text: $newAvatarUrlString)
-                    .keyboardType(.URL)
-                Button("Отмена") {
-                    showSiteEditAlert = false
-                    newAvatarUrlString = ""
+            .alert(NSLocalizedString("Ссылка на фото", comment: ""), isPresented: $showAvatarUrlAlert) {
+                TextField(
+                    NSLocalizedString("Ссылка на фото", comment: ""),
+                    text: $avatarUrlInput
+                )
+                .keyboardType(.URL)
+                Button(NSLocalizedString("Отмена", comment: "")) {
+					avatarUrlInput = ""
                 }
-                Button("Сохранить") {
-                    avatarUrlString = newAvatarUrlString
-                }
-            }
-            .alert("Уверены,\nчто хотите выйти?", isPresented: $wantExitHasChanges) {
-                Button("Остаться") {
-                    // TODO: Cancel action
-                    print("Cancel")
-                }
-                Button("Выйти") {
-                    // TODO: Exit action
-                    print("Exit")
+                Button(NSLocalizedString("Сохранить", comment: "")) {
+					data.avatarURL = URL(string: avatarUrlInput)
+					avatarUrlInput = ""
                 }
             }
             VStack(alignment: .leading, spacing: 8) {
-                Text("Имя")
+                Text(NSLocalizedString("Имя", comment: ""))
                     .font(Font(UIFont.headline3))
-                TextField("Joaquin Phoenix", text: $name)
-                    .applyTextInputStyle()
-                    .onChange(of: name) {
-                        coordinator.showSaveButton()
-                    } // TODO: потом поменяю логику, это для демо
+                TextField(
+                    NSLocalizedString("Имя", comment: ""),
+                    text: $data.name
+                )
+                .applyTextInputStyle()
             }
             VStack(alignment: .leading, spacing: 8) {
                 Text("Описание")
                     .font(Font(UIFont.headline3))
-                TextEditor(text: $description)
+                TextEditor(text: $data.description)
                     .applyTextInputStyle()
                     .scrollContentBackground(.hidden)
-                    .onChange(of: description) {
-                        coordinator.showSaveButton()
-                    } // TODO: потом поменяю логику, это для демо
+                    .frame(minHeight: 55, maxHeight: 155)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            .frame(minHeight: 40, maxHeight: 155)
-            .fixedSize(horizontal: false, vertical: true)
-            
             VStack(alignment: .leading, spacing: 8) {
-                Text("Сайт")
+                Text(NSLocalizedString("Сайт", comment: ""))
                     .font(Font(UIFont.headline3))
-                TextField("", text: $siteUrlString)
-                    .applyTextInputStyle()
-                    .onChange(of: siteUrlString) {
-                        coordinator.showSaveButton()
-                    } // TODO: потом поменяю логику, это для демо
+                TextField(
+                    NSLocalizedString("Сайт", comment: ""),
+                    text: $data.website
+                )
+                .applyTextInputStyle()
             }
             Spacer()
         }
         .frame(maxWidth: .infinity)
+		.disabled(isSaving)
+		.allowsHitTesting(!isSaving)
         .overlay(alignment: .bottom) {
             SaveButtonView(
-                isVisible: coordinator.shouldShowSaveButton,
-                onSave: { print("Saved") }
+                isVisible: hasChanges && !isSaving,
+                onSave: {
+                    Task {
+						await onSave(data)
+                    }
+                }
             )
         }
         .overlay {
@@ -108,48 +159,66 @@ struct ProfileEditView: View {
                     .scaleEffect(1.3)
                     .colorScheme(.light)
             }
-            .opacity(isSaveInProgress ? 1 : 0)
+			.opacity(isSaving ? 1 : 0)
+			.allowsHitTesting(false)
         }
         .padding(.horizontal)
         .background(Color.ypWhite)
-        .navigationBarBackButtonHidden(true) /// Может это лучше убрать, пока оставлю
-        .introspectNavigationController { navigationController in /// Отключаем стандартный жест свайпа назад
-            navigationController.interactivePopGestureRecognizer?.isEnabled = false
-        }
+        .navigationBarBackButtonHidden(true)
         .gesture(
-            DragGesture(minimumDistance: 30, coordinateSpace: .global)
-            .onEnded { value in
-                if value.translation.width > 50 {
-                    // TODO: Тут нужна проверка, поменялись ли даннные, если нет то пропустим
-                    wantExitHasChanges = true
+			isSaving ? nil : DragGesture(minimumDistance: 30, coordinateSpace: .global)
+                .onEnded { value in
+                    if value.translation.width > 50 {
+                        exitEditing()
+                    }
                 }
-            }
         )
-        .onAppear {
-            coordinator.hideSaveButton()
-        }
+		.alert(NSLocalizedString("Уверены,\nчто хотите выйти?", comment: ""), isPresented: $showExitAlert) {
+			Button(NSLocalizedString("Остаться", comment: "")) {}
+			Button(NSLocalizedString("Выйти", comment: "")) {
+				onCancel()
+				onDismiss()
+			}
+		}
+		.alert("Ошибка", isPresented: $showErrorAlert) {
+			Button("OK") { }
+		} message: {
+			Text(errorMessage ?? "Неизвестная ошибка")
+		}
+		.onChange(of: errorMessage) { _, newValue in
+			if newValue != nil {
+				showErrorAlert = true
+			}
+		}
     }
+	// MARK: - Локальная обработка
+	private func exitEditing() {
+		if hasChanges {
+			showExitAlert = true
+		} else {
+			onCancel()
+			onDismiss()
+		}
+	}
 }
 
-// MARK: - UIViewControllerRepresentable
-struct NavigationControllerIntrospection: UIViewControllerRepresentable {
-    var callback: (UINavigationController) -> Void
-    func makeUIViewController(context: Context) -> UIViewController {
-        let controller = UIViewController()
-        DispatchQueue.main.async {
-            if let navigationController = controller.navigationController {
-                callback(navigationController)
-            }
-        }
-        return controller
-    }
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
-}
-
-#Preview {
-    NavigationView {
-        ProfileEditView(
-            coordinator: RootCoordinatorImpl()
-        )
-    }
+#Preview("Редактирование") {
+	ProfileEditView(
+		initialData: ProfileEditData(
+			name: "Герман",
+			description: "iOS-разработчик, люблю SwiftUI",
+			website: "https://github.com",
+			avatarURL: URL(string: "https://i.pravatar.cc/300")
+		),
+		onSave: { data in
+			print("Сохранено: \(data.name)")
+		},
+		onCancel: {
+			print("Отмена")
+		},
+		onDismiss: {
+			print("Закрыто")
+		},
+		isSaving: false
+	)
 }
