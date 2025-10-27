@@ -42,7 +42,7 @@ struct CollectionDetailsHeaderView: View {
 		}
 	}
 
-	var authorDetails: some View {
+	private var authorDetails: some View {
 		HStack(spacing: 4) {
 			Text("\(NSLocalizedString("CatalogDetails.CollectionAuthor", comment: "")):")
 				.font(.system(size: 13, weight: .regular))

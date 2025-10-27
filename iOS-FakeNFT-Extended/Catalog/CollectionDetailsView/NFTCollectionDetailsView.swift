@@ -20,15 +20,15 @@ struct NFTCollectionDetailsView: View {
 		GridItem(.adaptive(minimum: 108))
 	]
 
-	var collection: NFTCollectionModel {
+	private var collection: NFTCollectionModel {
 		viewModel.collection
 	}
 
-	var nfts: [NFTModel] {
+	private var nfts: [NFTModel] {
 		viewModel.nfts
 	}
 
-	var author: NFTUserModel? {
+	private var author: NFTUserModel? {
 		viewModel.author
 	}
 
@@ -83,7 +83,7 @@ struct NFTCollectionDetailsView: View {
 		}
 	}
 
-	var collectionImage: some View {
+	private var collectionImage: some View {
 		BasicImage(imageURL: collection.imageURL, contentMode: .fill)
 		.frame(height: 310)
 		.clipShape(
@@ -94,7 +94,7 @@ struct NFTCollectionDetailsView: View {
 		)
 	}
 
-	var collectionDetails: some View {
+	private var collectionDetails: some View {
 		HStack {
 			CollectionDetailsHeaderView(
 				collectionTitle: collection.title,
@@ -109,7 +109,7 @@ struct NFTCollectionDetailsView: View {
 		}
 	}
 
-	var nftsGrid: some View {
+	private var nftsGrid: some View {
 		LazyVGrid(
 			columns: columns,
 			alignment: .center,
@@ -138,7 +138,7 @@ struct NFTCollectionDetailsView: View {
 		}
 	}
 
-	var backButton: some ToolbarContent {
+	private var backButton: some ToolbarContent {
 		ToolbarItem(placement: .topBarLeading) {
 			Button {
 				dismiss()

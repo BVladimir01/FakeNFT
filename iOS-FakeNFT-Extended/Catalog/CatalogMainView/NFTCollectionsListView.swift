@@ -61,7 +61,7 @@ struct NFTCollectionsListView: View {
 			}
     }
 
-    var scrollView: some View {
+	private var scrollView: some View {
         ScrollView {
             LazyVStack(spacing: 8) {
 				ForEach(viewModel.collections) { collection in
