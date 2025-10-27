@@ -36,4 +36,20 @@ struct CartItem: Identifiable, Equatable, Hashable, Decodable {
 	func hash(into hasher: inout Hasher) {
 		hasher.combine(id)
 	}
+
+	static let mock1 = CartItem(
+		id: "1",
+		image: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Pink/Calder/1.png")!,
+		name: "aijoijdioajoid",
+		rating: 2,
+		price: 22.2
+	)
+
+	static let mock2 = CartItem(
+		id: "2",
+		image: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Pink/Calder/1.png")!,
+		name: "aijoijdioajoid",
+		rating: 2,
+		price: 22.2
+	)
 }

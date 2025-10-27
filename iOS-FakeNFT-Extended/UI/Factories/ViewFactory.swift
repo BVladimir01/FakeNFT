@@ -10,9 +10,27 @@ import SwiftUI
 @MainActor
 final class ViewFactory {
 	private let rootCoordinator: any RootCoordinator
+	private let cartService: any CartService
+	private let paymentService: any PaymentService
+	private let cartViewModel: CartViewModel
+	private let cartCoordinator: CartCoordinatorImpl
+
+	// MARK: - Views
+
+	private lazy var cartView: some View = CartView(viewModel: cartViewModel, coordinator: cartCoordinator)
 
 	init(rootCoordinator: any RootCoordinator) {
+		let networkService = DefaultNetworkClient()
+		let context = SwiftDataStack.shared.container.mainContext
+		let storageService = NftStorageSwiftDataImpl(context: context)
+		let nftService = NftServiceImpl(networkClient: networkService, storage: storageService)
+
 		self.rootCoordinator = rootCoordinator
+		self.cartService = CartServiceImpl(networkService: networkService, nftService: nftService)
+		self.cartViewModel = CartViewModel(cartService: cartService)
+		self.cartCoordinator = CartCoordinatorImpl(rootCoordinator: rootCoordinator)
+
+		self.paymentService = PaymentServiceImpl(networkService: networkService)
 	}
 
 	// сюда добавляются все экраны, которые перекрывают tabView,
@@ -22,12 +40,13 @@ final class ViewFactory {
 		switch screen {
 			case .dummy:
 				EmptyView()
-			case .payment:
-				EmptyView()
-			case .web:
-				EmptyView()
-			case .successPayment:
-				EmptyView()
+			case let .payment(coordinartor, action):
+				let viewModel = PaymentViewModel(paymentService: paymentService, onSuccess: action)
+				PaymentView(viewModel: viewModel, coordinator: coordinartor)
+			case .web(let url):
+				WebView(url: url, isAppearenceEnabled: true)
+			case .successPayment(let action):
+				SuccessPaymentScreen(action: action)
 		}
 	}
 
@@ -40,8 +59,14 @@ final class ViewFactory {
 		switch coverType {
 			case .dummy:
 				EmptyView()
-			case .deleteConfirmation:
-				EmptyView()
+			case let .deleteConfirmation(item, onDelete, onCancel):
+				DeleteConfirmationView(item: item) {
+					onDelete()
+					self.rootCoordinator.hideCover()
+				} cancelAction: {
+					onCancel()
+					self.rootCoordinator.hideCover()
+				}
 		}
 	}
 
@@ -51,7 +76,7 @@ final class ViewFactory {
 			case .catalog:
 				TestCatalogView()
 			case .cart:
-				EmptyView()
+				cartView
 			case .profile:
 				EmptyView()
 			case .statistic:
