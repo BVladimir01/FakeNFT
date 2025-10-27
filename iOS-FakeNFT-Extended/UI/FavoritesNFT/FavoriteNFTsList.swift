@@ -12,7 +12,7 @@ struct FavoriteNFTsList: View {
 	@Environment(\.dismiss) private var dismiss
 	@EnvironmentObject var viewModel: ProfileViewModel
 	@State private var togglingLikeId: String?
-	
+
 	var body: some View {
 		ZStack {
 			if let likedNfts = viewModel.likedNfts, !likedNfts.isEmpty {
@@ -25,7 +25,7 @@ struct FavoriteNFTsList: View {
 					.frame(maxWidth: .infinity, maxHeight: .infinity)
 					.multilineTextAlignment(.center)
 			}
-			
+
 			if viewModel.isTogglingLike {
 				Color.black.opacity(0.2)
 					.ignoresSafeArea()
@@ -59,6 +59,7 @@ struct FavoriteNFTsList: View {
 			Text(viewModel.errorMessage ?? "Не удалось получить данные")
 		}
 	}
+
 	@ViewBuilder
 	private var contentView: some View {
 		ScrollView {

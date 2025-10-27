@@ -14,7 +14,7 @@ struct ProfileRequest: NetworkRequest {
 	}
 	var httpMethod: HttpMethod
 	let dto: Data?
-	
+
 	init(httpMethod: HttpMethod, dto: Data? = nil) {
 		self.httpMethod = httpMethod
 		self.dto = dto
@@ -30,14 +30,14 @@ struct ProfileFormRequest: NetworkRequest {
 // MARK: - Servic
 @MainActor
 final class ProfileServiceImpl: ProfileService {
-    private let networkClient: any NetworkClient
-    init(networkClient: any NetworkClient) {
-        self.networkClient = networkClient
-    }
-    func loadProfile() async throws -> User {
-        let request = ProfileRequest(httpMethod: .get)
-        return try await networkClient.send(request: request)
-    }
+	private let networkClient: any NetworkClient
+	init(networkClient: any NetworkClient) {
+		self.networkClient = networkClient
+	}
+	func loadProfile() async throws -> User {
+		let request = ProfileRequest(httpMethod: .get)
+		return try await networkClient.send(request: request)
+	}
 	func saveProfile(_ user: User) async throws -> User {
 		let dto = ProfileUpdateDTO(
 			name: user.name,
@@ -46,18 +46,18 @@ final class ProfileServiceImpl: ProfileService {
 			website: user.website?.absoluteString,
 			likes: nil
 		)
-		
+
 		guard let formData = dto.toFormURLEncoded(),
 			  let url = URL(string: "\(RequestConstants.baseURL)/api/v1/profile/1") else {
 			throw URLError(.badURL)
 		}
-		
+
 		let request = ProfileFormRequest(endpoint: url, dto: formData)
 		return try await networkClient.send(request: request)
 	}
-    func hasChanges(original: User, current: User) -> Bool {
-        original != current
-    }
+	func hasChanges(original: User, current: User) -> Bool {
+		original != current
+	}
 	func updateLikes(to likes: [String]) async throws -> User {
 		let dto = ProfileUpdateDTO(
 			name: nil,
@@ -66,11 +66,11 @@ final class ProfileServiceImpl: ProfileService {
 			website: nil,
 			likes: likes
 		)
-		
+
 		guard let formData = dto.toFormURLEncoded() else {
 			throw URLError(.badURL)
 		}
-		
+
 		let request = ProfileRequest(httpMethod: .put, dto: formData)
 		return try await networkClient.send(request: request)
 	}

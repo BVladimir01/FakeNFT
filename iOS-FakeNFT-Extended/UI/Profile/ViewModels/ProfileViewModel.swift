@@ -10,7 +10,7 @@ import SwiftUI
 @MainActor
 @Observable
 final class ProfileViewModel: ObservableObject {
-	@ObservationIgnored private let profileService: any ProfileService
+	private let profileService: any ProfileService
 	private let nftService: any NftService
 	private(set) var user: User?
 	private(set) var editingUser: User?
@@ -26,12 +26,15 @@ final class ProfileViewModel: ObservableObject {
 		self.profileService = profileService
 		self.nftService = nftsService
 	}
+
 	func showSortContextMenu() {
 		wantToSortMyNft = true
 	}
+
 	func clearError() {
 		errorMessage = nil
 	}
+
 	func loadProfile() async {
 		do {
 			self.user = try await profileService.loadProfile()
@@ -41,6 +44,7 @@ final class ProfileViewModel: ObservableObject {
 			self.errorMessage = "Не удалось получить данные"
 		}
 	}
+
 	private func loadNfts(for ids: [String]) async throws -> [NFTEntity] {
 		let nftModels = try await withThrowingTaskGroup(of: NFT.self, returning: [NFT].self) { @MainActor group in
 			for id in ids {
@@ -66,6 +70,7 @@ final class ProfileViewModel: ObservableObject {
 			)
 		}
 	}
+
 	func loadMyNFTs() async {
 		guard let user = user else {
 			errorMessage = "Не удалось получить данные"
@@ -81,23 +86,24 @@ final class ProfileViewModel: ObservableObject {
 			errorMessage = "Не удалось получить данные"
 		}
 	}
+
 	func loadLikedNFTs() async {
 		guard let user = user else {
 			self.likedNfts = []
 			return
 		}
-		
+
 		let likes = user.likes ?? []
-		
+
 		if likes.isEmpty {
 			self.likedNfts = []
 			self.isLoadingLikedNFTs = false
 			return
 		}
-		
+
 		isLoadingLikedNFTs = true
 		defer { isLoadingLikedNFTs = false }
-		
+
 		do {
 			self.likedNfts = try await loadNfts(for: likes)
 			errorMessage = nil
@@ -105,6 +111,7 @@ final class ProfileViewModel: ObservableObject {
 			errorMessage = "Не удалось получить данные о лайках"
 		}
 	}
+
 	func saveProfile() async {
 		guard let editingUser = editingUser else { return }
 		isSaveInProgress = true
@@ -119,6 +126,7 @@ final class ProfileViewModel: ObservableObject {
 			errorMessage = "Не удалось сохранить профиль"
 		}
 	}
+
 	func updateProfile(with data: ProfileEditData) async {
 		guard var editingUser = editingUser else { return }
 		editingUser.name = data.name
@@ -128,13 +136,16 @@ final class ProfileViewModel: ObservableObject {
 		self.editingUser = editingUser
 		await saveProfile()
 	}
+
 	func cancelEditing() {
 		editingUser = user
 		errorMessage = nil
 	}
+
 	func isLiked(nftId: String) -> Bool {
 		user?.likes?.contains(nftId) == true
 	}
+
 	func toggleLike(nftId: String) async {
 		guard !isTogglingLike else { return }
 		isTogglingLike = true
@@ -156,18 +167,20 @@ final class ProfileViewModel: ObservableObject {
 			}
 		}
 	}
+
 	func sortMyNFTs(by criteria: SortCriteria) {
 		guard var nfts = myNfts else { return }
 		switch criteria {
-		case .price:
-			nfts.sort { $0.price < $1.price }
-		case .rating:
-			nfts.sort { $0.rating > $1.rating }
-		case .name:
-			nfts.sort { $0.name < $1.name }
+			case .price:
+				nfts.sort { $0.price < $1.price }
+			case .rating:
+				nfts.sort { $0.rating > $1.rating }
+			case .name:
+				nfts.sort { $0.name < $1.name }
 		}
 		self.myNfts = nfts
 	}
+
 	enum SortCriteria {
 		case price, rating, name
 	}

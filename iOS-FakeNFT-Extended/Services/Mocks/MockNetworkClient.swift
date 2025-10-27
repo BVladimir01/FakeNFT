@@ -16,7 +16,6 @@ final actor MockNetworkClient: NetworkClient {
 	func send<Response>(request: any NetworkRequest) async throws -> Response where Response: Decodable & Sendable {
 		sendCalled = true
 		lastRequest = request
-		print(1, result)
 		guard let result = result as? Response else {
 			throw URLError(.badServerResponse)
 		}
