@@ -12,7 +12,7 @@ struct ProfileInfo: View {
 	var body: some View {
 		VStack(alignment: .leading, spacing: 20) {
 			HStack(spacing: 16) {
-				ProfileImage(imageUrl: user.avatar)
+				AvatarView(imageURL: user.avatar)
 				Text(user.name)
 					.foregroundColor(.ypBlack)
 					.font(Font(UIFont.headline3))

@@ -63,7 +63,9 @@ extension DesignSystem {
 		static let buttonMediumWidth: CGFloat = 240
 		static let imageXSmall: CGFloat = 36
 		static let imageSmall: CGFloat = 48
+		static let imageSmall2: CGFloat = 23
 		static let imageMedium: CGFloat = 108
+		static let imageMedium2: CGFloat = 70
 	}
 	enum BorderWidth {
 		static let small: CGFloat = 1

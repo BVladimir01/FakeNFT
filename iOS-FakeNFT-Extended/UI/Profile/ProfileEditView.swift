@@ -73,41 +73,39 @@ struct ProfileEditView: View {
 				}
 				Spacer()
 			}
-			ProfileImage(
-				imageUrl: data.avatarURL,
-				canEdit: true
-			) {
-				showAvatarMenu = true
-			}
-			.actionSheet(isPresented: $showAvatarMenu) {
-				ActionSheet(
-					title: Text(NSLocalizedString("Фото профиля", comment: "")),
-					buttons: [
-						.default(Text(NSLocalizedString("Изменить фото", comment: ""))) {
-							avatarUrlInput = data.avatarURL?.absoluteString ?? ""
-							showAvatarUrlAlert = true
-						},
-						.destructive(Text(NSLocalizedString("Удалить фото", comment: ""))) {
-							data.avatarURL = nil
-						},
-						.cancel(Text(NSLocalizedString("Отмена", comment: "")))
-					]
-				)
-			}
-			.alert(NSLocalizedString("Ссылка на фото", comment: ""), isPresented: $showAvatarUrlAlert) {
-				TextField(
-					NSLocalizedString("Ссылка на фото", comment: ""),
-					text: $avatarUrlInput
-				)
-				.keyboardType(.URL)
-				Button(NSLocalizedString("Отмена", comment: "")) {
-					avatarUrlInput = ""
+			AvatarView(imageURL: data.avatarURL, showBadge: true)
+				.onTapGesture {
+					showAvatarMenu = true
 				}
-				Button(NSLocalizedString("Сохранить", comment: "")) {
-					data.avatarURL = URL(string: avatarUrlInput)
-					avatarUrlInput = ""
+				.actionSheet(isPresented: $showAvatarMenu) {
+					ActionSheet(
+						title: Text(NSLocalizedString("Фото профиля", comment: "")),
+						buttons: [
+							.default(Text(NSLocalizedString("Изменить фото", comment: ""))) {
+								avatarUrlInput = data.avatarURL?.absoluteString ?? ""
+								showAvatarUrlAlert = true
+							},
+							.destructive(Text(NSLocalizedString("Удалить фото", comment: ""))) {
+								data.avatarURL = nil
+							},
+							.cancel(Text(NSLocalizedString("Отмена", comment: "")))
+						]
+					)
 				}
-			}
+				.alert(NSLocalizedString("Ссылка на фото", comment: ""), isPresented: $showAvatarUrlAlert) {
+					TextField(
+						NSLocalizedString("Ссылка на фото", comment: ""),
+						text: $avatarUrlInput
+					)
+					.keyboardType(.URL)
+					Button(NSLocalizedString("Отмена", comment: "")) {
+						avatarUrlInput = ""
+					}
+					Button(NSLocalizedString("Сохранить", comment: "")) {
+						data.avatarURL = URL(string: avatarUrlInput)
+						avatarUrlInput = ""
+					}
+				}
 			VStack(alignment: .leading, spacing: 8) {
 				Text(NSLocalizedString("Имя", comment: ""))
 					.font(Font(UIFont.headline3))
