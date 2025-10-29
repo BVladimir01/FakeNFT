@@ -14,16 +14,34 @@ protocol ProfileCoordinator: AnyObject {
 	func goBack()
 	func openMyNFTs()
 	func openLikedNFTs()
-	func openProfileEdit()
+//	func openProfileEdit()
+	func openProfileEditScreen(
+		for profile: ShortProfileModel,
+		saveAction: @escaping (ShortProfileModel) async -> Void
+	)
 	func openWebsite(url: URL)
 	// MARK: - Covers
 	func openUserAgreement()
+	func showUrlEditAlert(for url: Binding<String>, title: String)
 	// MARK: - Состояние UI
 	func showSaveButton()
 	func hideSaveButton()
 }
 
 final class ProfileCoordinatorImpl: ProfileCoordinator {
+	func openProfileEditScreen(
+		for profile: ShortProfileModel,
+		saveAction: @escaping (ShortProfileModel) async -> Void
+	) {
+		rootCoordinator.open(
+			screen: .profileEdit(
+				profile,
+				saveAction: saveAction,
+				closeAction: goBack
+			)
+		)
+	}
+	
 	private let rootCoordinator: any RootCoordinator
 	private var _shouldShowSaveButton = false
 	var shouldShowSaveButton: Bool { _shouldShowSaveButton }
@@ -32,7 +50,7 @@ final class ProfileCoordinatorImpl: ProfileCoordinator {
 	}
 	func showSaveButton() { _shouldShowSaveButton = true }
 	func hideSaveButton() { _shouldShowSaveButton = false }
-	func openProfileEdit() { rootCoordinator.open(screen: .profileEdit) }
+//	func openProfileEdit() { rootCoordinator.open(screen: .profileEdit) }
 	func openMyNFTs() { rootCoordinator.open(screen: .myNfts) }
 	func openLikedNFTs() { rootCoordinator.open(screen: .favorites) }
 	func goBack() { rootCoordinator.goBack() }
@@ -42,5 +60,8 @@ final class ProfileCoordinatorImpl: ProfileCoordinator {
 	}
 	func openWebsite(url: URL) {
 		rootCoordinator.open(screen: .web(url: url))
+	}
+	func showUrlEditAlert(for url: Binding<String>, title: String) {
+		rootCoordinator.show(cover: .urlEditAlert(url: url, title: title))
 	}
 }

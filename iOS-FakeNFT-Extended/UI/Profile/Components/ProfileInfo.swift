@@ -7,34 +7,35 @@
 
 import SwiftUI
 
-struct ProfileInfo: View {
-	let user: User
-	var body: some View {
-		VStack(alignment: .leading, spacing: 20) {
-			HStack(spacing: 16) {
-				AvatarView(imageURL: user.avatar)
-				Text(user.name)
-					.foregroundColor(.ypBlack)
-					.font(Font(UIFont.headline3))
-			}
-			Text(user.description ?? "")
-				.font(Font(UIFont.caption2))
-				.foregroundColor(.ypBlack)
-		}
-	}
-}
-
-#Preview {
-	LightDarkPreviewWrapper {
-		ProfileInfo(user: User(
-			id: "sdfsd",
-			name: "Joaquin Phoenix",
-			avatar: URL(string: "https://tinyurl.com/mrxzhdb7") ?? nil,
-			nfts: [],
-			rating: "4.5",
-			description: "Дизайнер из Казани, люблю цифровое искусство и бейглы.",
-			website: nil)
-		)
-		.padding(.horizontal)
-	}
-}
+//struct ProfileTopView2: View {
+//	let avatar: URL?
+//	let name: String
+//	let description: String?
+//
+//	var body: some View {
+//		VStack(alignment: .leading, spacing: DesignSystem.Spacing.large) {
+//			HStack(spacing: DesignSystem.Spacing.medium2) {
+//				AvatarView(imageURL: avatar)
+//				Text(name)
+//					.foregroundColor(DesignSystem.Color.textPrimary)
+//					.font(DesignSystem.Font.headline3)
+//			}
+//			if let description {
+//				Text(description)
+//					.font(DesignSystem.Font.caption2)
+//					.foregroundColor(DesignSystem.Color.textPrimary)
+//			}
+//		}
+//	}
+//}
+//
+//#Preview {
+//	LightDarkPreviewWrapper {
+//		ProfileTopView(
+//			avatar: URL(string: "https://tinyurl.com/mrxzhdb7"),
+//			name: "Joaquin Phoenix",
+//			description: "Дизайнер из Казани, люблю цифровое искусство и бейглы."
+//		)
+//		.padding(.horizontal)
+//	}
+//}

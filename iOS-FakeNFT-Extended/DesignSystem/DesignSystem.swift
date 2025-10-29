@@ -29,6 +29,7 @@ extension DesignSystem {
 		static let medium: CGFloat = 12
 		static let medium2: CGFloat = 16
 		static let large: CGFloat = 20
+		static let large2: CGFloat = 40
 //		static let xl: CGFloat = 32
 	}
 	enum Padding {
@@ -49,6 +50,7 @@ extension DesignSystem {
 		static let caption2 = SwiftUI.Font.system(size: 13, weight: .regular)
 		static let bodyBold = SwiftUI.Font.system(size: 17, weight: .bold)
 		static let bodyRegular = SwiftUI.Font.system(size: 17, weight: .regular)
+		static let bodySemibold = SwiftUI.Font.system(size: 17, weight: .semibold)
 		static let headline1 = SwiftUI.Font.system(size: 34, weight: .bold)
 		static let headline2 = SwiftUI.Font.system(size: 28, weight: .bold)
 		static let headline3 = SwiftUI.Font.system(size: 22, weight: .bold)

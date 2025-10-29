@@ -12,7 +12,17 @@ import SwiftUI
 final class ProfileViewModel: ObservableObject {
 	private let profileService: any ProfileService
 	private let nftService: any NftService
-	private(set) var user: User?
+	private(set) var user: User!
+	var isLoading = false
+	var profile: ShortProfileModel {
+//		guard let user else { return nil }
+		return ShortProfileModel(
+			avatar: user.avatar,
+			name: user.name,
+			description: user.description,
+			website: user.website
+		)
+	}
 	private(set) var editingUser: User?
 	private(set) var isSaveInProgress: Bool = false
 	private(set) var myNfts: [NFTEntity]? = []
@@ -36,9 +46,12 @@ final class ProfileViewModel: ObservableObject {
 	}
 
 	func loadProfile() async {
+		isLoading = true
+		defer { isLoading = false }
 		do {
 			self.user = try await profileService.loadProfile()
 			self.editingUser = user
+
 		} catch {
 			print("❌ Failed to load profile: \(error)")
 			self.errorMessage = "Не удалось получить данные"
@@ -127,12 +140,12 @@ final class ProfileViewModel: ObservableObject {
 		}
 	}
 
-	func updateProfile(with data: ProfileEditData) async {
+	func updateProfile(_ data: ShortProfileModel) async {
 		guard var editingUser = editingUser else { return }
 		editingUser.name = data.name
-		editingUser.description = data.description.isEmpty ? nil : data.description
-		editingUser.website = URL(string: data.website)
-		editingUser.avatar = data.avatarURL
+		editingUser.description = data.description
+		editingUser.website = data.website
+		editingUser.avatar = data.avatar
 		self.editingUser = editingUser
 		await saveProfile()
 	}

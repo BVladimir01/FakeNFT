@@ -68,20 +68,9 @@ final class ViewFactory {
 			case .favorites:
 				FavoriteNFTsList()
 					.environmentObject(profileViewModel)
-			case .profileEdit:
-				ProfileEditView(
-					initialData: ProfileEditData(
-						name: profileViewModel.editingUser?.name ?? "",
-						description: profileViewModel.editingUser?.description ?? "",
-						website: profileViewModel.editingUser?.website?.absoluteString ?? "",
-						avatarURL: profileViewModel.editingUser?.avatar
-					),
-					onSave: { editedData in await self.profileViewModel.updateProfile(with: editedData) },
-					onCancel: { self.profileViewModel.cancelEditing() },
-					onDismiss: { self.rootCoordinator.goBack() },
-					isSaving: self.profileViewModel.isSaveInProgress,
-					errorMessage: self.profileViewModel.errorMessage
-				)
+			case let .profileEdit(profile, saveAction, closeAction):
+				let viewModel = ProfileEditViewModel(profile: profile, saveAction: saveAction, closeAction: closeAction)
+				ProfileEditView(viewModel: viewModel, coordinator: profileCoordinator)
 		}
 	}
 
@@ -102,6 +91,8 @@ final class ViewFactory {
 					onCancel()
 					self.rootCoordinator.hideCover()
 				}
+			case let .urlEditAlert(url, title):
+				UrlEditAlert(url: url, title: title, cancelAction: self.rootCoordinator.hideCover)
 		}
 	}
 

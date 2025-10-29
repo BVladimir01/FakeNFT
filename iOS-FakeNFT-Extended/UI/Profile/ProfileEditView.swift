@@ -7,216 +7,279 @@
 
 import SwiftUI
 
-// MARK: - Интерфейс для редактирования
-struct ProfileEditData: Equatable {
-	var name: String
-	var description: String
-	var website: String
-	var avatarURL: URL?
-	static func == (lhs: ProfileEditData, rhs: ProfileEditData) -> Bool {
-		lhs.name == rhs.name &&
-		lhs.description == rhs.description &&
-		lhs.website == rhs.website &&
-		lhs.avatarURL?.absoluteString == rhs.avatarURL?.absoluteString
+@MainActor @Observable final class ProfileEditViewModel {
+	var profile: ShortProfileModel
+	var isAvatarMenuShown = false
+	var isAvatarAlertShown = false
+	var isExitAlertShown = false
+	var alertAvatarUrl = ""
+	var isLoading = false
+	var errorMessage: String?
+
+	var isErrorShown: Bool {
+		get {
+			errorMessage != nil
+		}
+		set {
+			if !newValue {
+				errorMessage = nil
+			}
+		}
+	}
+	var isDataChanged: Bool {
+		initialProfileData != profile
+	}
+
+	private let initialProfileData: ShortProfileModel
+	private let onSave: (ShortProfileModel) async throws -> Void
+	private let onClose: () -> Void
+
+	init(
+		profile: ShortProfileModel,
+		saveAction: @escaping (ShortProfileModel) async throws -> Void,
+		closeAction: @escaping () -> Void
+	) {
+		self.profile = profile
+		initialProfileData = profile
+		onSave = saveAction
+		onClose = closeAction
+	}
+
+	func showAvatarMenu() {
+		isAvatarMenuShown = true
+	}
+
+	func removePhoto() {
+		profile.avatar = nil
+	}
+
+	func changePhoto() {
+		alertAvatarUrl = profile.avatarString
+		isAvatarAlertShown = true
+	}
+
+	func saveAndExit() {
+		isLoading = true
+		Task {
+			defer { isLoading = false }
+			do {
+				try await onSave(profile)
+				onClose()
+			} catch {
+				errorMessage = error.localizedDescription
+			}
+		}
+	}
+
+	func cancelExit() {
+		isExitAlertShown = false
+	}
+
+	func exit() {
+		if !isDataChanged {
+			confirmExit()
+		} else {
+			isExitAlertShown = true
+		}
+	}
+
+	func confirmExit() {
+		onClose()
 	}
 }
-
-// MARK: - Клоужеры
-typealias ProfileSaveAction = (ProfileEditData) async -> Void
-typealias ProfileCancelAction = () -> Void
-typealias ProfileDismissAction = () -> Void
 
 struct ProfileEditView: View {
-	// MARK: - Входящие проперти
-	private let initialData: ProfileEditData
-	private let onSave: ProfileSaveAction
-	private let onCancel: ProfileCancelAction
-	private let onDismiss: ProfileDismissAction
-	private let isSaving: Bool
-	private let errorMessage: String?
+	@State var viewModel: ProfileEditViewModel
+	let coordinator: any ProfileCoordinator
 
-	// MARK: - Локальная обработка
-	@State private var data: ProfileEditData
-	@State private var showAvatarMenu = false
-	@State private var showAvatarUrlAlert = false
-	@State private var avatarUrlInput = ""
-	@State private var showExitAlert = false
-	@State private var showErrorAlert = false
-	init(
-		initialData: ProfileEditData,
-		onSave: @escaping ProfileSaveAction,
-		onCancel: @escaping ProfileCancelAction,
-		onDismiss: @escaping ProfileDismissAction,
-		isSaving: Bool = false,
-		errorMessage: String? = nil
-	) {
-		self.initialData = initialData
-		self._data = State(initialValue: initialData)
-		self.onSave = onSave
-		self.onCancel = onCancel
-		self.onDismiss = onDismiss
-		self.isSaving = isSaving
-		self.errorMessage = errorMessage
-	}
-	private var hasChanges: Bool {
-		data.name != initialData.name ||
-		data.description != initialData.description ||
-		data.website != initialData.website ||
-		data.avatarURL?.absoluteString != initialData.avatarURL?.absoluteString
-	}
 	var body: some View {
 		VStack(spacing: 24) {
-			HStack {
-				Button(action: exitEditing) {
-					Image(.chevronLeft)
-						.foregroundColor(.ypBlack)
-				}
-				Spacer()
-			}
-			AvatarView(imageURL: data.avatarURL, showBadge: true)
-				.onTapGesture {
-					showAvatarMenu = true
-				}
-				.actionSheet(isPresented: $showAvatarMenu) {
-					ActionSheet(
-						title: Text(NSLocalizedString("Фото профиля", comment: "")),
-						buttons: [
-							.default(Text(NSLocalizedString("Изменить фото", comment: ""))) {
-								avatarUrlInput = data.avatarURL?.absoluteString ?? ""
-								showAvatarUrlAlert = true
-							},
-							.destructive(Text(NSLocalizedString("Удалить фото", comment: ""))) {
-								data.avatarURL = nil
-							},
-							.cancel(Text(NSLocalizedString("Отмена", comment: "")))
-						]
-					)
-				}
-				.alert(NSLocalizedString("Ссылка на фото", comment: ""), isPresented: $showAvatarUrlAlert) {
-					TextField(
-						NSLocalizedString("Ссылка на фото", comment: ""),
-						text: $avatarUrlInput
-					)
-					.keyboardType(.URL)
-					Button(NSLocalizedString("Отмена", comment: "")) {
-						avatarUrlInput = ""
+			AvatarView(imageURL: viewModel.profile.avatar, showBadge: true)
+				.onTapGesture(perform: viewModel.showAvatarMenu)
+				.confirmationDialog(
+					"Фото профиля",
+					isPresented: $viewModel.isAvatarMenuShown,
+					titleVisibility: .visible
+				) {
+					Button("Изменить фото") {
+						coordinator.showUrlEditAlert(
+							for: $viewModel.profile.avatarString,
+							title: "Ссылка на фото"
+						)
 					}
-					Button(NSLocalizedString("Сохранить", comment: "")) {
-						data.avatarURL = URL(string: avatarUrlInput)
-						avatarUrlInput = ""
-					}
+					Button("Удалить фото", role: .destructive, action: viewModel.removePhoto)
+					Button("Отмена", role: .cancel) {}
 				}
-			VStack(alignment: .leading, spacing: 8) {
-				Text(NSLocalizedString("Имя", comment: ""))
-					.font(Font(UIFont.headline3))
-				TextField(
-					NSLocalizedString("Имя", comment: ""),
-					text: $data.name
-				)
-				.applyTextInputStyle()
-			}
-			VStack(alignment: .leading, spacing: 8) {
-				Text("Описание")
-					.font(Font(UIFont.headline3))
-				TextEditor(text: $data.description)
-					.applyTextInputStyle()
-					.scrollContentBackground(.hidden)
-					.frame(minHeight: 55, maxHeight: 155)
-					.fixedSize(horizontal: false, vertical: true)
-			}
-			VStack(alignment: .leading, spacing: 8) {
-				Text(NSLocalizedString("Сайт", comment: ""))
-					.font(Font(UIFont.headline3))
-				TextField(
-					NSLocalizedString("Сайт", comment: ""),
-					text: $data.website
-				)
-				.applyTextInputStyle()
-			}
+			FormField(title: "Имя", value: $viewModel.profile.name)
+			FormField(title: "Описание", value: $viewModel.profile.description)
+			FormField(title: "Сайт", value: $viewModel.profile.websiteString)
 			Spacer()
+			Button("Сохранить", action: viewModel.saveAndExit)
+				.buttonStyle(PrimaryButtonStyle())
+				.opacity(viewModel.isDataChanged ? 1 : 0)
 		}
-		.frame(maxWidth: .infinity)
-		.disabled(isSaving)
-		.allowsHitTesting(!isSaving)
-		.overlay(alignment: .bottom) {
-			SaveButtonView(
-				isVisible: hasChanges && !isSaving,
-				onSave: {
-					Task {
-						await onSave(data)
-					}
-				}
-			)
-		}
-		.overlay {
-			ZStack {
-				Color.ypLightGrey.cornerRadius(8)
-					.frame(width: 82, height: 82)
-					.colorScheme(.light)
-				ProgressView()
-					.scaleEffect(1.3)
-					.colorScheme(.light)
-			}
-			.opacity(isSaving ? 1 : 0)
-			.allowsHitTesting(false)
-		}
+		.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+		.disabled(viewModel.isLoading)
 		.padding(.horizontal)
-		.background(Color.ypWhite)
+		.background(DesignSystem.Color.background)
 		.navigationBarBackButtonHidden(true)
-		.gesture(
-			isSaving ? nil : DragGesture(minimumDistance: 30, coordinateSpace: .global)
-				.onEnded { value in
-					if value.translation.width > 50 {
-						exitEditing()
-					}
-				}
-		)
-		.alert(NSLocalizedString("Уверены,\nчто хотите выйти?", comment: ""), isPresented: $showExitAlert) {
-			Button(NSLocalizedString("Остаться", comment: "")) {}
-			Button(NSLocalizedString("Выйти", comment: "")) {
-				onCancel()
-				onDismiss()
-			}
+		.toolbar {
+			BackToolbar(action: viewModel.exit)
 		}
-		.alert("Ошибка", isPresented: $showErrorAlert) {
+		.alert("Уверены,\nчто хотите выйти?", isPresented: $viewModel.isExitAlertShown) {
+			Button("Остаться", action: viewModel.cancelExit)
+			Button("Выйти", action: viewModel.confirmExit)
+		}
+		.alert("Ошибка", isPresented: $viewModel.isErrorShown) {
 			Button("OK") { }
 		} message: {
-			Text(errorMessage ?? "Неизвестная ошибка")
-		}
-		.onChange(of: errorMessage) { _, newValue in
-			if newValue != nil {
-				showErrorAlert = true
-			}
-		}
-	}
-	// MARK: - Локальная обработка
-	private func exitEditing() {
-		if hasChanges {
-			showExitAlert = true
-		} else {
-			onCancel()
-			onDismiss()
+			Text(viewModel.errorMessage ?? "?")
 		}
 	}
 }
 
-#Preview("Редактирование") {
-	ProfileEditView(
-		initialData: ProfileEditData(
-			name: "Герман",
-			description: "iOS-разработчик, люблю SwiftUI",
-			website: "https://github.com",
-			avatarURL: URL(string: "https://i.pravatar.cc/300")
-		),
-		onSave: { data in
-			print("Сохранено: \(data.name)")
-		},
-		onCancel: {
-			print("Отмена")
-		},
-		onDismiss: {
-			print("Закрыто")
-		},
-		isSaving: false
-	)
+//#Preview("Редактирование") {
+//	ProfileEditView(
+//		initialData: ProfileEditData(
+//			name: "Герман",
+//			description: "iOS-разработчик, люблю SwiftUI",
+//			website: "https://github.com",
+//			avatarURL: URL(string: "https://i.pravatar.cc/300")
+//		),
+//		onSave: { data in
+//			print("Сохранено: \(data.name)")
+//		},
+//		onCancel: {
+//			print("Отмена")
+//		},
+//		onDismiss: {
+//			print("Закрыто")
+//		},
+//		isSaving: false
+//	)
+//}
+
+struct UrlEditAlert: View {
+	@State private var url: String
+	@Binding private var urlForUpdate: String
+	private let title: String
+	private let cancelAction: () -> Void
+
+	init(url: Binding<String>, title: String, cancelAction: @escaping () -> Void) {
+		self.url = url.wrappedValue
+		self._urlForUpdate = url
+		self.title = title
+		self.cancelAction = cancelAction
+	}
+
+	var body: some View {
+		ZStack {
+			Color.ypUBackground
+				.ignoresSafeArea()
+				.background(.ultraThinMaterial)
+			VStack(spacing: 16) {
+				VStack(spacing: 7) {
+					Text(title)
+						.font(DesignSystem.Font.bodySemibold)
+					TextField(title, text: $url)
+						.frame(height: 46)
+						.padding(.horizontal, 16)
+						.background(DesignSystem.Color.background)
+						.clipShape(RoundedRectangle(cornerRadius: 11))
+						.padding(.horizontal, 16)
+				}
+				VStack(spacing: .zero) {
+					Divider()
+					HStack(spacing: .zero) {
+						Button(role: .cancel) {
+							cancelAction()
+						} label: {
+							Text("Отмена")
+								.font(DesignSystem.Font.bodyRegular)
+						}
+						.frame(maxWidth: .infinity)
+						Divider()
+						Button {
+							urlForUpdate = url
+							cancelAction()
+						} label: {
+							Text("Сохранить")
+								.font(DesignSystem.Font.bodyBold)
+						}
+						.frame(maxWidth: .infinity)
+					}
+					.frame(height: 44)
+				}
+			}
+			.frame(width: 273, height: 151, alignment: .bottom)
+			.background(
+				Color.ypAlert
+			)
+			.clipShape(RoundedRectangle(cornerRadius: 14))
+		}
+	}
+}
+#Preview {
+	@Previewable @State var url: String = "https://asas"
+	UrlEditAlert(url: $url, title: "Ссылка на фото", cancelAction: {})
+}
+
+struct FormField: View {
+	enum FieldType {
+		case textField
+		case textEditor
+	}
+	let title: String
+	@Binding var value: String
+	let fieldType: FieldType
+
+	init(title: String, value: Binding<String>, fieldType: FieldType = .textField) {
+		self.title = title
+		self._value = value
+		self.fieldType = fieldType
+		UITextView.appearance().textContainerInset =
+				UIEdgeInsets(top: 11, left: 0, bottom: 11, right: 0)
+	}
+
+	init(title: String, value: Binding<String?>, fieldType: FieldType = .textField) {
+		let binding = Binding(
+			get: { value.wrappedValue ?? "" },
+			set: { newValue in
+				value.wrappedValue = newValue.isEmpty ? nil : newValue
+			}
+		)
+		self.init(title: title, value: binding, fieldType: fieldType)
+	}
+
+	var body: some View {
+		VStack(alignment: .leading, spacing: 8) {
+			Text(title)
+				.font(DesignSystem.Font.headline3)
+			Group {
+				switch fieldType {
+					case .textField:
+						TextField(title, text: $value)
+							.frame(height: 44)
+					case .textEditor:
+						TextEditor(text: $value)
+							.frame(height: 132)
+							.scrollContentBackground(.hidden)
+				}
+			}
+			.font(DesignSystem.Font.bodyRegular)
+			.foregroundStyle(DesignSystem.Color.textPrimary)
+			.padding(.horizontal, DesignSystem.Padding.medium - (fieldType == .textEditor ? 5 : 0))
+			.background(
+				DesignSystem.Color.backgroundSecondary
+					.cornerRadius(DesignSystem.Radius.small)
+			)
+		}
+	}
+}
+
+#Preview {
+	@Previewable @State var name = ""
+	@Previewable @State var desc = ""
+	FormField(title: "Имя", value: $name)
+	FormField(title: "Описание", value: $desc, fieldType: .textEditor)
 }
