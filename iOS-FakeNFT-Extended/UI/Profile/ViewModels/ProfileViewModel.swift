@@ -9,7 +9,7 @@ import SwiftUI
 
 @MainActor
 @Observable
-final class ProfileViewModel: ObservableObject {
+final class ProfileViewModel {
 	private let profileService: any ProfileService
 	private let nftService: any NftService
 	private(set) var user: User!

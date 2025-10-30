@@ -63,11 +63,9 @@ final class ViewFactory {
 			case .successPayment(let action):
 				SuccessPaymentScreen(action: action)
 			case .myNfts:
-				MyNFTList()
-					.environmentObject(profileViewModel)
+				MyNFTList(viewModel: profileViewModel)
 			case .favorites:
-				FavoriteNFTsList()
-					.environmentObject(profileViewModel)
+				FavoriteNFTsList(viewModel: profileViewModel)
 			case let .profileEdit(profile, saveAction, closeAction):
 				let viewModel = ProfileEditViewModel(profile: profile, saveAction: saveAction, closeAction: closeAction)
 				ProfileEditView(viewModel: viewModel, coordinator: profileCoordinator)
