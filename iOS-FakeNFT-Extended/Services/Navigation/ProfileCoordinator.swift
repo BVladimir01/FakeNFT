@@ -14,7 +14,6 @@ protocol ProfileCoordinator: AnyObject {
 	func goBack()
 	func openMyNFTs()
 	func openLikedNFTs(ids: [String], unlikeAction: @escaping (String) async -> Void)
-//	func openProfileEdit()
 	func openProfileEditScreen(
 		for profile: ShortProfileModel,
 		saveAction: @escaping (ShortProfileModel) async -> Void
