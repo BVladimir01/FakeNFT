@@ -69,7 +69,7 @@ final class NFTCollectionDetailsViewModel {
 					return
 				}
 				state = .loading
-				try await collectionDetailsService.updateFavoriteStatus(nftID: nft.id)
+				try await collectionDetailsService.updateCartStatus(nftID: nft.id)
 				nfts[index].isAddedToCart.toggle()
 				state = .loaded
 			}

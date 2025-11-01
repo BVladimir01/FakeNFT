@@ -9,11 +9,10 @@
 import Foundation
 
 struct OrdersRequest: NetworkRequest, Sendable {
+
 	let httpMethod: HttpMethod
 	let dto: Data?
-	var endpoint: URL? {
-		URL(string: "\(RequestConstants.baseURL)/api/v1/orders/1")
-	}
+	var endpoint: URL?
 
 	init(
 		httpMethod: HttpMethod = .get,
@@ -32,14 +31,15 @@ struct OrdersRequest: NetworkRequest, Sendable {
 
 	init(httpMethod: HttpMethod = .get, nftIDs: [NFTNetworkModel.ID]? = nil) {
 		self.httpMethod = httpMethod
-		if let nftIDs {
-			let nfts = nftIDs.map { $0.uuidString.lowercased() }
-			let params = nfts.isEmpty ? [:] : [
-				"nfts": nfts.joined(separator: ",")
-			]
-			self.dto = params.percentEncoded()
-		} else {
-			self.dto = nil
+		var params: [String: String] = [:]
+		if let nfts = nftIDs?.compactMap({ $0.uuidString.lowercased() }) {
+			params["nfts"] = nfts.joined(separator: ",")
 		}
+		if !params.isEmpty {
+			dto = params.percentEncoded()
+		} else {
+			dto = nil
+		}
+		endpoint = URL(string: "\(RequestConstants.baseURL)/api/v1/orders/1")
 	}
 }

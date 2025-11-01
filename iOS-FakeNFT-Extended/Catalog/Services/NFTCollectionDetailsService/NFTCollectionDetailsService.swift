@@ -15,6 +15,11 @@ protocol NFTCollectionDetailsServiceProtocol: Sendable {
 	func updateFavoriteStatus(nftID: NFTModel.ID) async throws
 }
 
+enum NFTCollectionDetailsServiceError: Error {
+	case cartUpdateError
+	case favoriteUpdateError
+}
+
 actor NFTCollectionDetailsService: NFTCollectionDetailsServiceProtocol {
 
 	private let networkClient: any NetworkClient
@@ -86,7 +91,10 @@ actor NFTCollectionDetailsService: NFTCollectionDetailsServiceProtocol {
 			nftIDs.append(nftID)
 		}
 		let orderPutRequest = OrdersRequest(httpMethod: .put, nftIDs: nftIDs)
-		_ = try await networkClient.send(request: orderPutRequest)
+		let orderResponse: NFTOrderNetworkModel = try await networkClient.send(request: orderPutRequest)
+		if orderResponse.nftIDs != nftIDs {
+			throw NFTCollectionDetailsServiceError.cartUpdateError
+		}
 	}
 
 	func updateFavoriteStatus(nftID: NFTModel.ID) async throws {
@@ -97,8 +105,10 @@ actor NFTCollectionDetailsService: NFTCollectionDetailsServiceProtocol {
 			likes.append(nftID)
 		}
 		let profilePutRequest = ProfileRequest(httpMethod: .put, likes: likes)
-		print("updating favourites")
-		_ = try await networkClient.send(request: profilePutRequest)
+		let profileResponse: NFTProfileNetworkModel = try await networkClient.send(request: profilePutRequest)
+		if profileResponse.likes != likes {
+			throw NFTCollectionDetailsServiceError.favoriteUpdateError
+		}
 	}
 
 	private func fetchNetworkCollection(id: NFTCollectionNetworkModel.ID) async throws -> NFTCollectionNetworkModel {
@@ -113,7 +123,6 @@ actor NFTCollectionDetailsService: NFTCollectionDetailsServiceProtocol {
 
 	private func fetchFavorites() async throws -> [NFTNetworkModel.ID] {
 		let profileGetRequest = ProfileRequest(httpMethod: .get)
-		print("fetching favourites")
 		let profile: NFTProfileNetworkModel = try await networkClient.send(request: profileGetRequest)
 		return profile.likes
 	}
