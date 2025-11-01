@@ -40,6 +40,7 @@ final class NFTCollectionsListViewModel {
 				state = .loading
 				let newCollections = try await collectionsProvider.fetch(sorting: sortingType)
 				collections.append(contentsOf: newCollections)
+				collections.sort(by: sortingType.sortingRule)
 				state = .loaded
 			} catch {
 				state = .error
@@ -49,18 +50,7 @@ final class NFTCollectionsListViewModel {
 
     func sort(by sortingType: CollectionsSortingType) {
 		guard sortingType != self.sortingType else { return }
-		state = .empty
-		Task {
-			guard state != .loading else { return }
-			do {
-				state = .loading
-				collections = try await collectionsProvider.fetch(sorting: sortingType)
-				state = .loaded
-			} catch {
-				state = .error
-			}
-			self.sortingType = sortingType
-		}
+		collections.sort(by: sortingType.sortingRule)
     }
 
 	init(collectionsProvider: any NFTCollectionsProviderProtocol) {
