@@ -19,7 +19,7 @@ struct ProfileRequest: NetworkRequest {
 		name: String? = nil,
 		description: String? = nil,
 		website: String? = nil,
-		likes: [NFTNetworkModel.ID]? = nil
+		likes: [NFTNetworkModel.ID]? = nil,
 	) {
 		self.httpMethod = httpMethod
 		var params: [String: String] = [:]
@@ -33,7 +33,7 @@ struct ProfileRequest: NetworkRequest {
 			params["website"] = website
 		}
 		if let likes = likes?.compactMap({ $0.uuidString.lowercased() }) {
-			params["nfts"] = likes.joined(separator: ",")
+			params["likes"] = likes.joined(separator: ",")
 		}
 		if !params.isEmpty {
 			dto = params.percentEncoded()
