@@ -27,6 +27,10 @@ struct StatisticList: View {
                         onUserTap(user)
                     }
                     .onAppear {
+                        if index >= users.count - 2 && canLoadMore {
+                            onLoadNextPage?()
+                        }
+                    }
                     .listRowSeparator(.hidden)
                     .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
             }
