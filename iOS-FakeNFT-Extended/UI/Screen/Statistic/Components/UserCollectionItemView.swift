@@ -22,35 +22,43 @@ struct UserCollectionView: View {
     }
 
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: 2) {
-                ForEach(viewModel.items) { nft in
-                    NFTCardView(
-                        name: nft.name,
-                        imageURL: nft.images.first,
-                        rating: nft.rating,
-                        price: nft.price,
-                        currency: .eth,
-                        isFavorite:
-                            viewModel.likedIds.contains(nft.id)||viewModel.likingInProgress.contains(nft.id),
-                        isAddedToCart:
-                            viewModel.cartIds.contains(nft.id)||viewModel.addingInProgress.contains(nft.id),
-                        onCartTap: {
-                            guard !viewModel.addingInProgress.contains(nft.id) else { return }
-                            Task { await viewModel.makeToggleCart(nftId: nft.id) }
-                        },
-                        onFavoriteTap: {
-                            guard !viewModel.likingInProgress.contains(nft.id) else { return }
-                            Task { await viewModel.makeToggleLike(nftId: nft.id) }
-                        }
-                    )
-                    .frame(minWidth: 108, maxWidth: .infinity)
-                    .frame(maxHeight: 192)
+        ZStack {
+            ScrollView {
+                LazyVGrid(columns: columns, spacing: 2) {
+                    ForEach(viewModel.items) { nft in
+                        NFTCardView(
+                            name: nft.name,
+                            imageURL: nft.images.first,
+                            rating: nft.rating,
+                            price: nft.price,
+                            currency: .eth,
+                            isFavorite:
+                                viewModel.likedIds.contains(nft.id)||viewModel.likingInProgress.contains(nft.id),
+                            isAddedToCart:
+                                viewModel.cartIds.contains(nft.id)||viewModel.addingInProgress.contains(nft.id),
+                            onCartTap: {
+                                guard !viewModel.addingInProgress.contains(nft.id) else { return }
+                                Task { await viewModel.makeToggleCart(nftId: nft.id) }
+                            },
+                            onFavoriteTap: {
+                                guard !viewModel.likingInProgress.contains(nft.id) else { return }
+                                Task { await viewModel.makeToggleLike(nftId: nft.id) }
+                            }
+                        )
+                        .frame(minWidth: 108, maxWidth: .infinity)
+                        .frame(maxHeight: 192)
+                    }
                 }
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, 24)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .padding(.bottom, 24)
+            if viewModel.isLoading {
+                ProgressView()
+                    .scaleEffect(1.5)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.ypWhite.opacity(0.8))
+            }
         }
         .navigationBarBackButtonHidden()
         .toolbar {
