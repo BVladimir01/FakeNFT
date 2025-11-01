@@ -57,17 +57,17 @@ struct NFTCollectionDetailsView: View {
 		}
 		.toolbarBackground(.hidden, for: .navigationBar)
 		.alert(
-			NSLocalizedString("CatalogDetails.Error", comment: ""),
+			"Failed to retrieve data",
 			isPresented: $isShowingErrorAlert
 		) {
 			Button { } label: {
-				Text(NSLocalizedString("Error.Cancel", comment: ""))
+				Text("Cancel")
 					.font(.system(size: 17, weight: .regular))
 			}
 			Button {
 				viewModel.updateDetails()
 			} label: {
-				Text(NSLocalizedString("Error.Repeat", comment: ""))
+				Text("Repeat")
 					.font(.system(size: 17, weight: .bold))
 			}
 		}
