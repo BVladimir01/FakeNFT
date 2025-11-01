@@ -18,20 +18,22 @@ final class ViewFactory {
 	// сюда добавляются все экраны, которые перекрывают tabView,
 	// и относятся к navigationStack
 	@ViewBuilder
-	func makeScreenView(for screen: Screen) -> some View {
-		switch screen {
-			case .dummy:
-				EmptyView()
-			case .payment:
-				EmptyView()
-			case .web:
-				EmptyView()
-			case .successPayment:
-				EmptyView()
+    func makeScreenView(for screen: Screen) -> some View {
+        switch screen {
+            case .dummy:
+                EmptyView()
+            case .payment:
+                EmptyView()
+            case .web:
+                EmptyView()
+            case .successPayment:
+                EmptyView()
             case .userCard(user: let user):
                 UserCard(user: user)
+            case .userCollection(let nftIDs):
+                UserCollectionView(nftIDs: nftIDs)
         }
-	}
+    }
 
 	// сюда вроде бы кроме корзины никто ничего не добавляет,
 	// но мне эта заготовка нужна в корне проекта
