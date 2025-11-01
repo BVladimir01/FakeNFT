@@ -21,7 +21,14 @@ final class UserCollectionViewModel {
     var addingInProgress: Set<String> = []
     var cartIds: Set<String> = []
 
-    init(nftIDs: [String], service: any NFTItemCollectionService) {
+    var likedIds: Set<String> = []
+    var likingInProgress: Set<String> = []
+    private let profileId: String = "1"
+
+    init(
+        nftIDs: [String],
+        service: any NFTItemCollectionService
+    ) {
         var seen = Set<String>()
         self.nftIDs = nftIDs.filter { seen.insert($0).inserted }
         self.service = service
@@ -97,7 +104,7 @@ final class UserCollectionViewModel {
         do {
             let client = DefaultNetworkClient()
             let payload = cartIds.isEmpty ? [""] : Array(cartIds)
-            let request = OrdersRequest(httpMethod: .put, nfts: Array(cartIds))
+            let request = OrdersRequest(httpMethod: .put, nfts: payload)
             _ = try await client.send(request: request)
         } catch {
             if willAdd {
@@ -105,9 +112,27 @@ final class UserCollectionViewModel {
             } else {
                 cartIds.insert(nftId)
             }
-            errorMessage = willAdd
-            ? "Не удалось добавить в корзину"
-            : "Не удалось удалить из корзины"
+            errorMessage = willAdd ? "Не удалось добавить в корзину" : "Не удалось удалить из корзины"
+        }
+    }
+
+    @MainActor
+    func makeToggleLike(nftId: String) async {
+        guard !likingInProgress.contains(nftId) else { return }
+        likingInProgress.insert(nftId); defer { likingInProgress.remove(nftId) }
+
+        let willLike = !likedIds.contains(nftId)
+        if willLike { likedIds.insert(nftId) } else { likedIds.remove(nftId) }
+
+        do {
+            let req = MockProfileAPI.ProfileFormRequest.putLikes(
+                profileId: profileId,
+                likes: Array(likedIds)
+            )
+            _ = try await DefaultNetworkClient().send(request: req) as Data
+        } catch {
+            if willLike { likedIds.remove(nftId) } else { likedIds.insert(nftId) }
+            errorMessage = willLike ? "Не удалось поставить лайк" : "Не удалось убрать лайк"
         }
     }
 }

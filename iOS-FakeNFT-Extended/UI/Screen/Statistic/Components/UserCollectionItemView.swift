@@ -31,14 +31,18 @@ struct UserCollectionView: View {
                         rating: nft.rating,
                         price: nft.price,
                         currency: .eth,
-                        isFavorite: false,
+                        isFavorite:
+                            viewModel.likedIds.contains(nft.id)||viewModel.likingInProgress.contains(nft.id),
                         isAddedToCart:
                             viewModel.cartIds.contains(nft.id)||viewModel.addingInProgress.contains(nft.id),
                         onCartTap: {
                             guard !viewModel.addingInProgress.contains(nft.id) else { return }
                             Task { await viewModel.makeToggleCart(nftId: nft.id) }
                         },
-                        onFavoriteTap: {}
+                        onFavoriteTap: {
+                            guard !viewModel.likingInProgress.contains(nft.id) else { return }
+                            Task { await viewModel.makeToggleLike(nftId: nft.id) }
+                        }
                     )
                     .frame(minWidth: 108, maxWidth: .infinity)
                     .frame(maxHeight: 192)
