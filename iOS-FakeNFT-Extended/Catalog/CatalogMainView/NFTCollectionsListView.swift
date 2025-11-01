@@ -37,17 +37,17 @@ struct NFTCollectionsListView: View {
 				viewModel.fetchCollections(isInitialFetch: true)
             }
 			.alert(
-				NSLocalizedString("Catalog.Error", comment: ""),
+				"Failed to retrieve data",
 				isPresented: $isShowingErrorAlert
 			) {
 				Button { } label: {
-					Text(NSLocalizedString("Error.Cancel", comment: ""))
+					Text("Cancel")
 						.font(.system(size: 17, weight: .regular))
 				}
 				Button {
 					viewModel.fetchCollections(isInitialFetch: false)
 				} label: {
-					Text(NSLocalizedString("Error.Repeat", comment: ""))
+					Text("Repeat")
 						.font(.system(size: 17, weight: .bold))
 				}
 			}
@@ -57,6 +57,10 @@ struct NFTCollectionsListView: View {
 				}
 				if oldValue == .loading && newValue == .loaded {
 					UIBlockingProgressHUD.dismiss()
+				}
+				if newValue == .error {
+					UIBlockingProgressHUD.dismiss()
+					isShowingErrorAlert = true
 				}
 			}
     }
