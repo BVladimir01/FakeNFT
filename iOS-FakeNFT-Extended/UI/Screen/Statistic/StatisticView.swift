@@ -15,23 +15,62 @@ struct StatisticView: View {
     }
 
     @State private var showSortDialog = false
-    @State private var viewModel = StatisticViewModel()
+    @State private var viewModel = StatisticViewModel(
+        usersService: UsersServiceImpl(networkClient: DefaultNetworkClient())
+    )
+    @State private var isNavigating = false
 
-    var body: some View {
-        NavigationStack {
-            StatisticList(users: viewModel.sortedUsers, sortOption: viewModel.sortOption)
-                .toolbarPreference(imageName: .sort) { showSortDialog = true }
-                .toolbar(.visible, for: .navigationBar)
-                .confirmationDialog("Сортировка", isPresented: $showSortDialog, titleVisibility: .visible) {
-                    Button("По имени") { sortRaw = StatisticList.SortOption.byName.rawValue }
-                    Button("По рейтингу") { sortRaw = StatisticList.SortOption.byRating.rawValue }
-                    Button("Закрыть", role: .cancel) { }
+    @Environment(StatisticCoordinator.self) private var coordinator
+
+    var body: some View { NavigationStack(path: coordinator.navigationPathBinding) {
+        StatisticList(
+            users: viewModel.sortedUsers,
+            sortOption: viewModel.sortOption,
+            onUserTap: { user in
+                coordinator.open(screen: .userCard(user: user))
+            },
+            canLoadMore: viewModel.canLoadMore,
+            onLoadNextPage: {
+                Task {
+                    await viewModel.loadNextPage()
                 }
+            }
+        )
+        .toolbarPreference(imageName: .sort) { showSortDialog = true }
+        .toolbar(.visible, for: .navigationBar)
+        .confirmationDialog("Сортировка", isPresented: $showSortDialog, titleVisibility: .visible) {
+            Button("По имени") { sortRaw = StatisticList.SortOption.byName.rawValue }
+            Button("По рейтингу") { sortRaw = StatisticList.SortOption.byRating.rawValue }
+            Button("Закрыть", role: .cancel) { }
         }
-        .onAppear { viewModel.makeSetSort(selectedSort) }
-        .onChange(of: sortRaw) { _, _ in
-            viewModel.makeSetSort(selectedSort)
+        .navigationDestination(for: Screen.self) { screen in
+            switch screen {
+                case .userCard(let user):
+                    UserCard(user: user)
+                        .environment(coordinator)
+                case .web(let url):
+                    WebView(url: url, isAppearenceEnabled: false)
+                case .userCollection(let ids):
+                    UserCollectionView(nftIDs: ids)
+                        .environment(coordinator)
+                default:
+                    EmptyView()
+            }
         }
+    }
+    .background(
+        Color.ypWhite
+            .ignoresSafeArea()
+    )
+    .task {
+        if viewModel.users.isEmpty {
+            await viewModel.makeLoad()
+        }
+    }
+    .onAppear { viewModel.makeSetSort(selectedSort) }
+    .onChange(of: sortRaw) { _, _ in
+        viewModel.makeSetSort(selectedSort)
+    }
     }
 }
 
@@ -47,6 +86,7 @@ struct StatisticView: View {
             .tabItem { Label(Tab.profile.title, image: Tab.profile.image) }
 
         StatisticView()
+            .environment(StatisticCoordinator.shared)
             .tabItem { Label(Tab.statistic.title, image: Tab.statistic.image) }
     }
     .accentColor(.ypUBlue)

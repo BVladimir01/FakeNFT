@@ -16,19 +16,25 @@ struct NFTCollectionRow: View {
     }
 
     let user: User
+    let onTap: () -> Void
 
     private var count: Int { user.nfts.count }
+    private var hasNFTs: Bool { count > 0 }
 
     var body: some View {
-        NavigationLink {
-            EmptyView()
-        } label: {
+        Button(action: {
+            guard hasNFTs else { return }
+            onTap()
+        }, label: {
             rowContent
-        }
-        .foregroundColor(Color.clear)
+        })
+        .buttonStyle(.plain)
         .contentShape(Rectangle())
         .listRowBackground(Color.clear)
         .listRowInsets(EdgeInsets())
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Коллекция NFT, \(count) шт.")
+        .accessibilityAddTraits(.isButton)
     }
 
     private var rowContent: some View {
@@ -40,6 +46,7 @@ struct NFTCollectionRow: View {
             .background(Color.clear)
             .overlay(alignment: .trailing) {
                 chevronIcon
+                    .padding(.trailing, 16)
             }
     }
 
@@ -51,14 +58,9 @@ struct NFTCollectionRow: View {
 }
 
 #Preview("NFTCollectionRow") {
-    ZStack {
-        NavigationStack {
-            List {
-                NFTCollectionRow(user: MockData.users[7])
-                    .listRowSeparator(.hidden)
-            }
-            .listStyle(.plain)
-        }
+    let onTap = {}
+    NavigationStack {
+        NFTCollectionRow(user: MockData.users[7], onTap: onTap)
     }
     .padding(.top, 250)
     .padding(.leading, 16)
