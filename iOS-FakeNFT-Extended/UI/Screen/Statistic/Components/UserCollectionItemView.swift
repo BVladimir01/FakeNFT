@@ -83,8 +83,17 @@ struct UserCollectionView: View {
 }
 
 #Preview {
-    NavigationStack {
-        UserCollectionView(nftIDs: MockNFTIDs.sample, service: MockNFTItemCollectionService())
+    let root = RootCoordinatorImpl()
+    let stat = StatisticCoordinator(rootCoordinator: root)
+
+    return NavigationStack(path: stat.navigationPathBinding) {
+        UserCollectionView(
+            nftIDs: MockNFTIDs.sample,
+            service: MockNFTItemCollectionService()
+        )
+        .environment(stat)
+        .navigationDestination(for: Screen.self) { screen in
+            ViewFactory(rootCoordinator: root).makeScreenView(for: screen)
+        }
     }
-    .environment(StatisticCoordinator.shared)
 }
