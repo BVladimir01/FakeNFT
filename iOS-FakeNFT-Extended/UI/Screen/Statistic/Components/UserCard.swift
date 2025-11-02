@@ -47,7 +47,7 @@ struct UserCard: View {
 
     private var bioContent: some View {
         VStack(spacing: Constants.bioSpacing) {
-            ProfileInfo(user: user)
+            UserInfo(user: user)
                 .lineLimit(Constants.profileLineLimit)
                 .lineSpacing(Constants.profileLineSpacing)
                 .frame(maxWidth: .infinity, alignment: .leading)
