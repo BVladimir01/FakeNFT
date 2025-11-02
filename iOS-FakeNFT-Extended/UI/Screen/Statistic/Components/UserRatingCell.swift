@@ -8,7 +8,6 @@ import Kingfisher
 import SwiftUI
 
 struct UserRatingCell: View {
-
     private enum Constants {
         enum Sizes {
             static let avatarSize: CGFloat = 28

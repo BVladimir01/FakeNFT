@@ -13,6 +13,7 @@ final class UserCollectionViewModel {
 
     private let nftIDs: [String]
     private let service: any NFTItemCollectionService
+    private let profileService: any ProfileService
 
     var items: [NFTItem] = []
     var isLoading = false
@@ -27,11 +28,13 @@ final class UserCollectionViewModel {
 
     init(
         nftIDs: [String],
-        service: any NFTItemCollectionService
+        service: any NFTItemCollectionService,
+        profileService: any ProfileService
     ) {
         var seen = Set<String>()
         self.nftIDs = nftIDs.filter { seen.insert($0).inserted }
         self.service = service
+        self.profileService = profileService
     }
 
     @MainActor
@@ -125,14 +128,20 @@ final class UserCollectionViewModel {
         if willLike { likedIds.insert(nftId) } else { likedIds.remove(nftId) }
 
         do {
-            let req = MockProfileAPI.ProfileFormRequest.putLikes(
-                profileId: profileId,
-                likes: Array(likedIds)
-            )
-            _ = try await DefaultNetworkClient().send(request: req) as Data
+            _ = try await profileService.updateLikes(to: Array(likedIds))
         } catch {
             if willLike { likedIds.remove(nftId) } else { likedIds.insert(nftId) }
             errorMessage = willLike ? "Не удалось поставить лайк" : "Не удалось убрать лайк"
+        }
+    }
+
+    @MainActor
+    func makeLoadLikes() async {
+        do {
+            let user = try await profileService.loadProfile()
+            self.likedIds = Set(user.likes ?? [])
+        } catch {
+
         }
     }
 }
@@ -141,5 +150,10 @@ extension UserCollectionViewModel {
     enum Default {
         static let nftService: any NFTItemCollectionService =
         NFTCollectionsServiceImpl(networkClient: DefaultNetworkClient())
+
+        @MainActor
+        static func makeProfileService() -> any ProfileService {
+            ProfileServiceImpl(networkClient: DefaultNetworkClient())
+        }
     }
 }

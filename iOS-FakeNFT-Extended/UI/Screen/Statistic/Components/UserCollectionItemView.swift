@@ -18,7 +18,11 @@ struct UserCollectionView: View {
         nftIDs: [String],
         service: any NFTItemCollectionService = UserCollectionViewModel.Default.nftService
     ) {
-        _viewModel = State(initialValue: UserCollectionViewModel(nftIDs: nftIDs, service: service))
+        _viewModel = State(initialValue: UserCollectionViewModel(
+            nftIDs: nftIDs,
+            service: service,
+            profileService: UserCollectionViewModel.Default.makeProfileService())
+        )
     }
 
     var body: some View {
@@ -71,6 +75,7 @@ struct UserCollectionView: View {
         .toolbarBackground(Color(.systemBackground), for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .task {
+            await viewModel.makeLoadLikes()
             await viewModel.makeLoad()
         }
     }
