@@ -76,6 +76,7 @@ struct UserCollectionView: View {
         .toolbarBackground(.visible, for: .navigationBar)
         .task {
             await viewModel.makeLoadLikes()
+            await viewModel.makeLoadCart()
             await viewModel.makeLoad()
         }
     }

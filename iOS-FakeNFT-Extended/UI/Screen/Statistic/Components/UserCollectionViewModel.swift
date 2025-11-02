@@ -106,8 +106,7 @@ final class UserCollectionViewModel {
 
         do {
             let client = DefaultNetworkClient()
-            let payload = cartIds.isEmpty ? [""] : Array(cartIds)
-            let request = OrdersRequest(httpMethod: .put, nfts: payload)
+            let request = OrdersRequest(httpMethod: .put, nfts: Array(cartIds))
             _ = try await client.send(request: request)
         } catch {
             if willAdd {
@@ -142,6 +141,17 @@ final class UserCollectionViewModel {
             self.likedIds = Set(user.likes ?? [])
         } catch {
 
+        }
+    }
+
+    @MainActor
+    func makeLoadCart() async {
+        do {
+            let order: Order = try await DefaultNetworkClient()
+                .send(request: OrdersRequest(httpMethod: .get))
+            self.cartIds = Set(order.nfts)
+        } catch {
+            self.errorMessage = "Не удалось загрузить корзину"
         }
     }
 }
