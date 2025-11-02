@@ -6,7 +6,6 @@
 //
 import SwiftUI
 
-@MainActor
 struct StatisticView: View {
     @AppStorage(AppStorageKeys.statisticSortOption)
     private var sortRaw = StatisticList.SortOption.byRating.rawValue
