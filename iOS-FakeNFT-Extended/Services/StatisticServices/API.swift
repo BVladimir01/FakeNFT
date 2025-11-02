@@ -18,9 +18,7 @@ enum API {
         /// - Returns: Путь до конкретного пользователя
         static func byId(_ id: String) -> String { "\(base)/users/\(id)" }
     }
-    /// Для работы с  NFT
     enum NFT {
-        /// Получить список NFT
         static let list = "\(base)/nft"
         /// Получение NFT с заданным Id
         /// - Parameter id: ID NFT
