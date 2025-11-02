@@ -19,6 +19,7 @@ final class ViewFactory {
 	private let profileService: any ProfileService
 	private let profileViewModel: ProfileViewModel
 	private let profileCoordinator: ProfileCoordinatorImpl
+    private let statisticCoordinator: StatisticCoordinator
 
 	// MARK: - Views
 
@@ -30,8 +31,9 @@ final class ViewFactory {
 		viewModel: profileViewModel,
 		coordinator: profileCoordinator
 	)
-	private lazy var statisticView: some View = StatisticView()
-		.environment(StatisticCoordinator.shared)
+
+    private lazy var statisticView: some View = StatisticView()
+        .environment(statisticCoordinator)
 
 	init(rootCoordinator: any RootCoordinator) {
 		let networkService = DefaultNetworkClient()
@@ -49,6 +51,8 @@ final class ViewFactory {
 		self.profileService = ProfileServiceImpl(networkClient: networkService)
 		self.profileViewModel = ProfileViewModel(profileService: profileService, nftsService: nftService)
 		self.profileCoordinator = ProfileCoordinatorImpl(rootCoordinator: rootCoordinator)
+
+        self.statisticCoordinator = StatisticCoordinator(rootCoordinator: rootCoordinator)
 	}
 
 	// сюда добавляются все экраны, которые перекрывают tabView,
@@ -75,10 +79,10 @@ final class ViewFactory {
 				ProfileEditView(viewModel: viewModel, coordinator: profileCoordinator)
 			case .userCard(user: let user):
 				UserCard(user: user)
-					.environment(StatisticCoordinator.shared)
+                    .environment(statisticCoordinator)
 			case .userCollection(let nftIDs):
 				UserCollectionView(nftIDs: nftIDs)
-					.environment(StatisticCoordinator.shared)
+					.environment(statisticCoordinator)
 		}
 	}
 

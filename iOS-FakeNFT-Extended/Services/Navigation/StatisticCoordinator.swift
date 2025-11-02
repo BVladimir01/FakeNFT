@@ -6,28 +6,22 @@
 //  Copyright © 2025 com.example. All rights reserved.
 //
 import SwiftUI
+import Observation
 
 @MainActor
 @Observable
-final class StatisticCoordinator: RootCoordinator {
-    var navigationPath: [Screen] = []
-    var activeCover: Cover?
-
+final class StatisticCoordinator {
+    
     private var isNavigating = false
 
-    private var rootCoordinator: any RootCoordinator
+    private let rootCoordinator: any RootCoordinator
 
     var navigationPathBinding: Binding<[Screen]> {
         Binding(
-            get: { self.navigationPath },
-            set: { self.navigationPath = $0 }
+            get: { self.rootCoordinator.navigationPath },
+            set: { self.rootCoordinator.navigationPath = $0 }
         )
     }
-
-    static let shared: StatisticCoordinator = {
-        let root = RootCoordinatorImpl()
-        return StatisticCoordinator(rootCoordinator: root)
-    }()
 
     init(rootCoordinator: any RootCoordinator) {
         self.rootCoordinator = rootCoordinator
@@ -44,7 +38,7 @@ final class StatisticCoordinator: RootCoordinator {
     func open(screen: Screen) {
         guard !isNavigating else { return }
         isNavigating = true
-        navigationPath.append(screen)
+        rootCoordinator.open(screen: screen)
         Task {
             try? await Task.sleep(nanoseconds: 300_000_000)
             self.isNavigating = false
@@ -52,10 +46,10 @@ final class StatisticCoordinator: RootCoordinator {
     }
 
     func popToRoot() {
-        navigationPath.removeAll()
+        rootCoordinator.popToRoot()
     }
 
     func goBack() {
-        _ = navigationPath.popLast()
+        rootCoordinator.goBack()
     }
 }
