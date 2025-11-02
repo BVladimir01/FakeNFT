@@ -56,6 +56,8 @@ final class NFTCollectionDetailsViewModel {
 				try await collectionDetailsService.updateFavoriteStatus(nftID: nft.id)
 				self.nfts[index].isFavourite.toggle()
 				state = .loaded
+			} catch {
+				state = .error
 			}
 		}
 	}
@@ -72,6 +74,8 @@ final class NFTCollectionDetailsViewModel {
 				try await collectionDetailsService.updateCartStatus(nftID: nft.id)
 				nfts[index].isAddedToCart.toggle()
 				state = .loaded
+			} catch {
+				state = .error
 			}
 		}
 	}
