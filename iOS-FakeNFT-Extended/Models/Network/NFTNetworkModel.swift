@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct NFTNetworkModel: Identifiable, Decodable {
+struct NFTNetworkModel: Identifiable, Equatable, Decodable {
 	let id: UUID
 	let title: String
 	let authorWebsiteURL: String

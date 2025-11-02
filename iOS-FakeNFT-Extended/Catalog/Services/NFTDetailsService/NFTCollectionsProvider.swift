@@ -33,7 +33,7 @@ actor NFTCollectionsProvider: NFTCollectionsProviderProtocol {
 				id: $0.id,
 				title: $0.title,
 				imageURL: URL(string: $0.coverURL),
-				nftsCount: $0.nftIDs.count
+				nftsCount: Set($0.nftIDs).count
 			)
 		}
 	}
