@@ -43,6 +43,7 @@ struct UserCard: View {
             .safeAreaPadding(.top, Constants.safeTop)
             .safeAreaPadding(.leading, Constants.safeLeading)
         }
+		.background(Color.ypWhite)
     }
 
     private var bioContent: some View {
@@ -57,7 +58,7 @@ struct UserCard: View {
                 .buttonStyle(BorderedButtonStyle(
                     font: Font(UIFont.caption1),
                     textColor: .ypBlack,
-                    color: Color(.systemBackground)
+                    color: Color(.clear)
                 ))
         }
         .padding(.trailing, Constants.bioTrailing)

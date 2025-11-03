@@ -33,6 +33,7 @@ struct StatisticList: View {
                     }
                     .listRowSeparator(.hidden)
                     .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0))
+					.listRowBackground(Color.clear)
             }
         }
         .listStyle(.plain)

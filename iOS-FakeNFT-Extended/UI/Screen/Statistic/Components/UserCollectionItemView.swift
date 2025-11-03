@@ -44,6 +44,7 @@ struct UserCollectionView: View {
 				.padding(.top, 12)
 				.padding(.bottom, 24)
 			}
+			.scrollIndicators(.hidden)
 			if viewModel.isLoading {
 				ProgressView()
 					.scaleEffect(1.5)
@@ -59,8 +60,7 @@ struct UserCollectionView: View {
 		}
 		.navigationTitle("Коллекция NFT")
 		.navigationBarTitleDisplayMode(.inline)
-		.toolbarBackground(Color(.systemBackground), for: .navigationBar)
-		.toolbarBackground(.visible, for: .navigationBar)
+		.background(Color.ypWhite)
 		.task {
 			await viewModel.makeLoadLikes()
 			await viewModel.makeLoadCart()
