@@ -13,7 +13,7 @@ import SwiftUI
 final class NFTCollectionsListViewModel {
 
 	private(set) var collections: [NFTCollectionCardModel] = []
-	private(set) var state: State = .empty
+	private(set) var state: ModelState = .empty
 
 	private let collectionsProvider: any NFTCollectionsProviderProtocol
 
@@ -53,13 +53,4 @@ final class NFTCollectionsListViewModel {
         self.collectionsProvider = collectionsProvider
     }
 
-}
-
-extension NFTCollectionsListViewModel {
-    enum State: Equatable {
-        case empty
-        case loading
-        case error
-        case loaded
-    }
 }

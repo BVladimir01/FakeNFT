@@ -17,7 +17,7 @@ final class NFTCollectionDetailsViewModel {
 	private(set) var onErrorCallback: () -> Void = { }
 	private(set) var details: NFTCollectionDetailsModel?
 	private(set) var nfts: [NFTModel] = []
-	private(set) var state: State = .empty
+	private(set) var state: ModelState = .empty
 
 	private let collectionDetailsService: any NFTCollectionDetailsServiceProtocol
 
@@ -91,10 +91,4 @@ final class NFTCollectionDetailsViewModel {
 		}
 	}
 
-}
-
-extension NFTCollectionDetailsViewModel {
-	enum State: Equatable {
-		case empty, loading, error, loaded
-	}
 }
