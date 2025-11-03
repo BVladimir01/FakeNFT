@@ -90,7 +90,7 @@ actor NFTCollectionDetailsService: NFTCollectionDetailsServiceProtocol {
 		} else {
 			nftIDs.append(nftID)
 		}
-		let orderPutRequest = OrdersRequest(httpMethod: .put, nftIDs: nftIDs)
+		let orderPutRequest = OrdersRequestCatalog(httpMethod: .put, nftIDs: nftIDs)
 		let orderResponse: NFTOrderNetworkModel = try await networkClient.send(request: orderPutRequest)
 		if orderResponse.nftIDs != nftIDs {
 			throw NFTCollectionDetailsServiceError.cartUpdateError
@@ -104,7 +104,7 @@ actor NFTCollectionDetailsService: NFTCollectionDetailsServiceProtocol {
 		} else {
 			likes.append(nftID)
 		}
-		let profilePutRequest = ProfileRequest(httpMethod: .put, likes: likes)
+		let profilePutRequest = ProfileRequestCatalog(httpMethod: .put, likes: likes)
 		let profileResponse: NFTProfileNetworkModel = try await networkClient.send(request: profilePutRequest)
 		if profileResponse.likes != likes {
 			throw NFTCollectionDetailsServiceError.favoriteUpdateError
@@ -128,7 +128,7 @@ actor NFTCollectionDetailsService: NFTCollectionDetailsServiceProtocol {
 	}
 
 	private func fetchCartStatus() async throws -> [NFTNetworkModel.ID] {
-		let orderGetRequest = OrdersRequest(httpMethod: .get, nftIDs: nil)
+		let orderGetRequest = OrdersRequestCatalog(httpMethod: .get, nftIDs: nil)
 		let response: NFTOrderNetworkModel = try await networkClient.send(request: orderGetRequest)
 		return response.nftIDs
 	}

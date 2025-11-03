@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct ProfileRequest: NetworkRequest {
+struct ProfileRequestCatalog: NetworkRequest {
 
 	let httpMethod: HttpMethod
 	let dto: Data?

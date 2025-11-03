@@ -5,7 +5,7 @@
 //  Created by Симонов Иван Дмитриевич on 09.10.2025.
 //
 
-import Foundation
+import SwiftUI
 
 enum Cover: Equatable {
 	case dummy
@@ -14,11 +14,13 @@ enum Cover: Equatable {
 		deleteAction: () -> Void,
 		cancelAction: () -> Void
 	)
+	case urlEditAlert(url: Binding<String>, title: String)
 
 	static func == (lhs: Cover, rhs: Cover) -> Bool {
 		switch (lhs, rhs) {
 			case (.dummy, .dummy): true
 			case (.deleteConfirmation, .deleteConfirmation): true
+			case (.urlEditAlert, .urlEditAlert): true
 			default: false
 		}
 	}

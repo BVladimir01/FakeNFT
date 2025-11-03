@@ -2,22 +2,18 @@
 //  UserByIDRequest.swift
 //  iOS-FakeNFT-Extended
 //
-//  Created by Vladimir on 31.10.2025.
+//  Created by Алина on 01.11.2025.
 //  Copyright © 2025 com.example. All rights reserved.
 //
 
 import Foundation
 
-struct UserByIDRequest: NetworkRequest {
+struct UserByIDRequest: NetworkRequest, Sendable {
+    let userID: String
 
-	private let id: NFTUserNetworkModel.ID
-
-	init(id: NFTUserNetworkModel.ID) {
-		self.id = id
-	}
-
-	var endpoint: URL? {
-		URL(string: "\(RequestConstants.baseURL)/api/v1/users/\(id)")
-	}
-	
+    var endpoint: URL? {
+        var comps = URLComponents(string: RequestConstants.baseURL)
+        comps?.path = API.Users.byId(userID)
+        return comps?.url
+    }
 }
