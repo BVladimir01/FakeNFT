@@ -45,12 +45,7 @@ struct UserCollectionView: View {
 				.padding(.bottom, 24)
 			}
 			.scrollIndicators(.hidden)
-			if viewModel.isLoading {
-				ProgressView()
-					.scaleEffect(1.5)
-					.frame(maxWidth: .infinity, maxHeight: .infinity)
-					.background(Color.ypWhite.opacity(0.8))
-			}
+			.loading(viewModel.isLoading)
 		}
 		.navigationBarBackButtonHidden()
 		.toolbar {
