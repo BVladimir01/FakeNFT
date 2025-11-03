@@ -28,12 +28,7 @@ final class NFTCollectionsListViewModel {
 	}
 
 	func fetchCollections(isInitialFetch: Bool) {
-		let guardCondition: Bool
-		if isInitialFetch {
-			guardCondition = (state == .empty)
-		} else {
-			guardCondition = (state != .loading)
-		}
+		let guardCondition = isInitialFetch ? (state == .empty) : (state != .loading)
 		Task {
 			guard guardCondition else { return }
 			do {
