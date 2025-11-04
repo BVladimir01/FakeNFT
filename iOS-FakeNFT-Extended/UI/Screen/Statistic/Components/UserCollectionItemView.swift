@@ -9,20 +9,20 @@ import SwiftUI
 
 struct UserCollectionView: View {
 
-	@State private var viewModel: UserCollectionViewModel
+	@State private var model: UserCollectionViewModel
 	@Environment(StatisticCoordinator.self) private var coordinator
 
 	private let columns = Array(repeating: GridItem(.flexible(), spacing: 9), count: 3)
 
 	init(viewModel: UserCollectionViewModel) {
-		_viewModel = State(initialValue: viewModel)
+		_model = State(initialValue: viewModel)
 	}
 
 	var body: some View {
 		ZStack {
 			ScrollView {
 				LazyVGrid(columns: columns, spacing: 2) {
-					ForEach(viewModel.items) { nft in
+					ForEach(model.items) { nft in
 						let model = makeCardModel(for: nft)
 						NFTCardView(
 							model: model,
@@ -38,7 +38,7 @@ struct UserCollectionView: View {
 				.padding(.bottom, 24)
 			}
 			.scrollIndicators(.hidden)
-			.loading(viewModel.isLoading)
+			.loading(model.isLoading)
 		}
 		.navigationBarBackButtonHidden()
 		.toolbar {
@@ -50,20 +50,20 @@ struct UserCollectionView: View {
 		.navigationBarTitleDisplayMode(.inline)
 		.background(Color.ypWhite)
 		.task {
-			await viewModel.makeLoadLikes()
-			await viewModel.makeLoadCart()
-			await viewModel.makeLoad()
+			await model.makeLoadLikes()
+			await model.makeLoadCart()
+			await model.makeLoad()
 		}
 	}
 
 	private func cartTap(for id: String) {
-		guard !viewModel.addingInProgress.contains(id) else { return }
-		Task { await viewModel.makeToggleCart(nftId: id) }
+		guard !model.addingInProgress.contains(id) else { return }
+		Task { await model.makeToggleCart(nftId: id) }
 	}
 
 	private func favoriteTap(for id: String) {
-		guard !viewModel.likingInProgress.contains(id) else { return }
-		Task { await viewModel.makeToggleLike(nftId: id) }
+		guard !model.likingInProgress.contains(id) else { return }
+		Task { await model.makeToggleLike(nftId: id) }
 	}
 
 	private func makeCardModel(for nft: NFTItem) -> NFTCardViewModel {
@@ -73,8 +73,8 @@ struct UserCollectionView: View {
 			rating: nft.rating,
 			price: nft.price,
 			currency: .eth,
-			favorite: viewModel.isFavorite(nft.id),
-			addedToCart: viewModel.isInCart(nft.id)
+			favorite: model.isFavorite(nft.id),
+			addedToCart: model.isInCart(nft.id)
 		)
 	}
 }
