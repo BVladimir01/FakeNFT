@@ -44,6 +44,9 @@ struct FavoritesCell: View {
 						Text(item.name)
 							.foregroundColor(DesignSystem.Color.textPrimary)
 							.font(DesignSystem.Font.bodyBold)
+							.lineLimit(2)
+							.fixedSize(horizontal: false, vertical: true)
+							.minimumScaleFactor(0.5)
 						RatingView(item.rating)
 					}
 					Text("\(item.priceString) ETH")
