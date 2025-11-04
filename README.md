@@ -220,6 +220,7 @@
     <table>
       <tr>
         <td><img src="PreviewGIFs/screencast_cart.gif" width="300"/></td>
+        <td><img src="PreviewGIFs/screencast_cart_dark.gif" width="300"/></td>
       </tr>
     </table>
     </details>
