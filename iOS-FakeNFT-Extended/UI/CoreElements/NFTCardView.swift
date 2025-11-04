@@ -11,7 +11,7 @@ import Kingfisher
 
 struct NFTCardView: View {
 
-	private let model: NFTCardViewModel
+	private let model: NFTCardModel
 	private let onCartTap: () -> Void
 	private let onFavoriteTap: () -> Void
 
@@ -25,7 +25,7 @@ struct NFTCardView: View {
 	}
 
 	init(
-		model: NFTCardViewModel,
+		model: NFTCardModel,
 		onCartTap: @escaping () -> Void,
 		onFavoriteTap: @escaping () -> Void
 	) {

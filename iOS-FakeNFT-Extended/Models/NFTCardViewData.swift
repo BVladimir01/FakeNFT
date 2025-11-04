@@ -7,7 +7,7 @@
 //
 import Foundation
 
-struct NFTCardViewModel {
+struct NFTCardModel {
 	let name: String
 	let imageURL: URL?
 	let rating: Int

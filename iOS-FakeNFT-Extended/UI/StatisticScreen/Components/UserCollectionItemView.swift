@@ -66,8 +66,8 @@ struct UserCollectionView: View {
 		Task { await model.makeToggleLike(nftId: id) }
 	}
 
-	private func makeCardModel(for nft: NFTItem) -> NFTCardViewModel {
-		NFTCardViewModel(
+	private func makeCardModel(for nft: NFTItem) -> NFTCardModel {
+		NFTCardModel(
 			name: nft.name,
 			imageURL: nft.images.first,
 			rating: nft.rating,
