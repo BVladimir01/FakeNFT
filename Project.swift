@@ -1,7 +1,7 @@
 import ProjectDescription
-
+let projectName = "iOS-FakeNFT-Extended"
 let project = Project(
-	name: "iOS-FakeNFT-Extended",
+	name: projectName,
 	organizationName: "com.example",
 	packages: [
 		.package(url: "https://github.com/onevcat/Kingfisher.git", from: "7.12.0"),
@@ -16,12 +16,12 @@ let project = Project(
 	),
 	targets: [
 		.target(
-			name: "iOS-FakeNFT-Extended",
+			name: projectName,
 			destinations: [.iPhone],
 			product: .app,
 			bundleId: "com.example.iOS-FakeNFT-Extended",
 			deploymentTargets: .iOS("17.4"),
-			infoPlist: .file(path: "iOS-FakeNFT-Extended/Info.plist"),
+			infoPlist: .file(path: "iOS-FakeNFT-Extended/App/Info.plist"),
 			sources: ["iOS-FakeNFT-Extended/**"],
 			resources: [
 				"Resources/Assets.xcassets",
@@ -48,7 +48,7 @@ let project = Project(
 			)
 		),
 		.target(
-			name: "iOS-FakeNFT-ExtendedTests",
+			name: projectName + "Tests",
 			destinations: [.iPhone],
 			product: .unitTests,
 			bundleId: "com.example.iOS-FakeNFT-ExtendedTests",
@@ -67,7 +67,7 @@ let project = Project(
 			)
 		),
 		.target(
-			name: "iOS-FakeNFT-ExtendedUITests",
+			name: projectName + "UITests",
 			destinations: [.iPhone],
 			product: .uiTests,
 			bundleId: "com.example.iOS-FakeNFT-ExtendedUITests",
@@ -84,6 +84,13 @@ let project = Project(
 					.release(name: "Release", xcconfig: "./xcconfigs/target_iOS-FakeNFT-ExtendedUITests.xcconfig")
 				]
 			)
+		)
+	],
+	schemes: [
+		Scheme.scheme(
+			name: projectName,
+			buildAction: .buildAction(targets: [.target(projectName)]),
+			testAction: .testPlans([.path(projectName + ".xctestplan")])
 		)
 	]
 )
