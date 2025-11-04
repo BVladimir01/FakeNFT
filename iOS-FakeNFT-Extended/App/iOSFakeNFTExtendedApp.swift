@@ -24,7 +24,6 @@ struct FakeNFTExtendedApp: App {
 				EmptyView()
 			} else {
 				ContentView()
-					.environment(ServicesAssembly(networkClient: DefaultNetworkClient(), nftStorage: NftStorageImpl()))
 			}
 		}
 	}
