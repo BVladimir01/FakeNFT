@@ -32,17 +32,19 @@ struct NFTCardView: View {
 	}
 
 	init(
-		model: NFTCardViewModel
+		model: NFTCardViewModel,
+		onCartTap: @escaping () -> Void,
+		onFavoriteTap: @escaping () -> Void
 	) {
 		self.name = model.name
 		self.imageURL = model.imageURL
 		self.rating = model.rating
 		self.price = model.price
 		self.currency = model.currency
-		self.isFavorite = model.isFavorite
-		self.isAddedToCart = model.isAddedToCart
-		self.onCartTap = model.onCartTap
-		self.onFavoriteTap = model.onFavoriteTap
+		self.isFavorite = model.favorite
+		self.isAddedToCart = model.addedToCart
+		self.onCartTap = onCartTap
+		self.onFavoriteTap = onFavoriteTap
 	}
 
 	init (
@@ -121,32 +123,35 @@ struct NFTCardView: View {
 			rating: 3,
 			price: 31.12,
 			currency: .eth,
-			isFavorite: true,
-			isAddedToCart: true,
-			onCartTap: { },
-			onFavoriteTap: { }
-		))
+			favorite: true,
+			addedToCart: true,
+		),
+					onCartTap: {},
+					onFavoriteTap: {}
+		)
 		NFTCardView(model: .init(
 			name: "Test name",
 			imageURL: URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Beige/Ellsa/1.png"),
 			rating: 0,
 			price: 31,
 			currency: .eth,
-			isFavorite: false,
-			isAddedToCart: false,
-			onCartTap: { },
-			onFavoriteTap: { }
-		))
+			favorite: false,
+			addedToCart: false,
+		),
+					onCartTap: {},
+					onFavoriteTap: {}
+		)
 		NFTCardView(model: .init(
 			name: "Test name",
 			imageURL: URL(string: "https://code.s3.yande.net/Mobile/iOS/NFT/Beige/Ellsa/1.png"),
 			rating: 0,
 			price: 31.1,
 			currency: .eth,
-			isFavorite: false,
-			isAddedToCart: false,
-			onCartTap: { },
-			onFavoriteTap: { }
-		))
+			favorite: false,
+			addedToCart: false,
+		),
+					onCartTap: {},
+					onFavoriteTap: {}
+		)
 	}
 }

@@ -23,21 +23,14 @@ struct UserCollectionView: View {
 			ScrollView {
 				LazyVGrid(columns: columns, spacing: 2) {
 					ForEach(viewModel.items) { nft in
-						let model = NFTCardViewModel(
-							name: nft.name,
-							imageURL: nft.images.first,
-							rating: nft.rating,
-							price: nft.price,
-							currency: .eth,
-							isFavorite: viewModel.isFavorite(nft.id),
-							isAddedToCart: viewModel.isInCart(nft.id),
+						let model = makeCardModel(for: nft)
+						NFTCardView(
+							model: model,
 							onCartTap: { cartTap(for: nft.id) },
 							onFavoriteTap: { favoriteTap(for: nft.id)}
 						)
-
-						NFTCardView(model: model)
-							.frame(minWidth: 108, maxWidth: .infinity)
-							.frame(maxHeight: 192)
+						.frame(minWidth: 108, maxWidth: .infinity)
+						.frame(maxHeight: 192)
 					}
 				}
 				.padding(.horizontal, 16)
@@ -71,6 +64,18 @@ struct UserCollectionView: View {
 	private func favoriteTap(for id: String) {
 		guard !viewModel.likingInProgress.contains(id) else { return }
 		Task { await viewModel.makeToggleLike(nftId: id) }
+	}
+
+	private func makeCardModel(for nft: NFTItem) -> NFTCardViewModel {
+		NFTCardViewModel(
+			name: nft.name,
+			imageURL: nft.images.first,
+			rating: nft.rating,
+			price: nft.price,
+			currency: .eth,
+			favorite: viewModel.isFavorite(nft.id),
+			addedToCart: viewModel.isInCart(nft.id)
+		)
 	}
 }
 
