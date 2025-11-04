@@ -8,13 +8,6 @@
 import SwiftUI
 
 struct NFTCollectionRow: View {
-
-	private enum Constants {
-		static let verticalPadding: CGFloat = 16
-		static let horizontalPadding: CGFloat = 16
-		static let chevronSize: CGFloat = 13
-	}
-
 	let user: User
 	let onTap: () -> Void
 
@@ -42,18 +35,18 @@ struct NFTCollectionRow: View {
 			.font(DesignSystem.Font.bodyBold)
 			.foregroundStyle(.ypBlack)
 			.frame(maxWidth: .infinity, alignment: .leading)
-			.padding(.vertical, Constants.verticalPadding)
+			.padding(.vertical, DesignSystem.Padding.medium)
 			.background(Color.clear)
 			.overlay(alignment: .trailing) {
 				chevronIcon
-					.padding(.trailing, 16)
+					.padding(.trailing, DesignSystem.Padding.medium)
 			}
 	}
 
 	private var chevronIcon: some View {
 		Image(systemName: "chevron.right")
 			.foregroundColor(.ypBlack)
-			.font(.system(size: Constants.chevronSize, weight: .medium))
+			.font(.system(size: DesignSystem.Sizes.imageXXSmall, weight: .medium))
 	}
 }
 

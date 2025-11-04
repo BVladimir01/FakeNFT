@@ -9,12 +9,6 @@ import SwiftUI
 
 struct UserRatingCell: View {
 	private enum Constants {
-		enum Sizes {
-			static let avatarSize: CGFloat = 28
-			static let cellMinHeight: CGFloat = 80
-			static let ratingLabelWidth: CGFloat = 27
-			static let labelMaxHeight: CGFloat = 80
-		}
 		enum Images {
 			static let placeholder = "person.crop.circle.fill"
 		}
@@ -35,7 +29,7 @@ struct UserRatingCell: View {
 						.fill(Color.ypLightGrey)
 				)
 		}
-		.frame(maxWidth: .infinity, minHeight: Constants.Sizes.cellMinHeight)
+		.frame(maxWidth: .infinity, minHeight: DesignSystem.Sizes.elementLargeHeight)
 		.background(Color.clear)
 	}
 
@@ -43,8 +37,8 @@ struct UserRatingCell: View {
 		StatisticLabel(
 			text: "\(ranking)",
 			font: DesignSystem.Font.caption1,
-			maxWidth: Constants.Sizes.ratingLabelWidth,
-			maxHeight: Constants.Sizes.labelMaxHeight)
+			maxWidth: DesignSystem.Sizes.elementXSmallWidth,
+			maxHeight: DesignSystem.Sizes.elementLargeHeight)
 		.background(Color.clear)
 		.clipShape(RoundedRectangle(cornerRadius: DesignSystem.Radius.small))
 	}
@@ -62,7 +56,7 @@ struct UserRatingCell: View {
 				font: DesignSystem.Font.headline3
 			)
 		}
-		.frame(maxWidth: .infinity, maxHeight: 80)
+		.frame(maxWidth: .infinity, maxHeight: DesignSystem.Sizes.elementLargeHeight)
 		.padding(.horizontal, DesignSystem.Padding.medium)
 	}
 
@@ -71,7 +65,7 @@ struct UserRatingCell: View {
 		let placeholder = Image(systemName: Constants.Images.placeholder)
 			.resizable()
 			.aspectRatio(contentMode: .fill)
-			.frame(width: Constants.Sizes.avatarSize, height: Constants.Sizes.avatarSize)
+			.frame(width: DesignSystem.Sizes.imageSmall3, height: DesignSystem.Sizes.imageSmall3)
 			.clipShape(Circle())
 			.foregroundStyle(.ypUGrey)
 
@@ -80,7 +74,7 @@ struct UserRatingCell: View {
 				.placeholder { placeholder }
 				.resizable()
 				.aspectRatio(contentMode: .fill)
-				.frame(width: Constants.Sizes.avatarSize, height: Constants.Sizes.avatarSize)
+				.frame(width: DesignSystem.Sizes.imageSmall3, height: DesignSystem.Sizes.imageSmall3)
 				.clipShape(Circle())
 		} else {
 			placeholder
