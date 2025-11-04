@@ -11,26 +11,26 @@ struct UsersRequest: NetworkRequest, Sendable {
 	let page: Int
 	let size: Int
 	let sortBy: String?
-	
+
 	init(page: Int = 0, size: Int = 10, sortBy: String? = nil) {
 		self.page = page
 		self.size = size
 		self.sortBy = sortBy
 	}
-	
+
 	var endpoint: URL? {
 		var comps = URLComponents(string: RequestConstants.baseURL)
 		comps?.path = API.Users.list
-		
+
 		var queryItems = [
 			URLQueryItem(name: "page", value: "\(page)"),
 			URLQueryItem(name: "size", value: "\(size)")
 		]
-		
+
 		if let sortBy = sortBy {
 			queryItems.append(URLQueryItem(name: "sortBy", value: sortBy))
 		}
-		
+
 		comps?.queryItems = queryItems
 		return comps?.url
 	}

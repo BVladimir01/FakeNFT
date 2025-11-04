@@ -30,7 +30,7 @@ extension DesignSystem {
 		static let medium: CGFloat = 12
 		static let medium2: CGFloat = 16
 		static let large: CGFloat = 20
-		static let xlarge:  CGFloat = 28
+		static let xlarge: CGFloat = 28
 		static let large2: CGFloat = 40
 		static let xxlarge: CGFloat = 41
 	}
