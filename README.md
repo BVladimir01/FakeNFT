@@ -224,4 +224,13 @@
       </tr>
     </table>
     </details>
+     <details>
+    <summary>📊 Статистика</summary>
+    <table>
+      <tr>
+        <td><img src="PreviewGIFs/screencast_statistic.gif" width="300" alt="Statistic light"/></td>
+        <td><img src="PreviewGIFs/screencast_statistic_dark.gif" width="300" alt="Statistic dark"/></td>
+      </tr>
+    </table>
+  </details>
 </details>
