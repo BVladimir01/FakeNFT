@@ -33,7 +33,7 @@ open FakeNFT.xcodeproj
 
 |Profile|Catalog|Cart|Stats|
 |:-----:|:-----:|:--:|:---:|
-|<img src="PreviewGIFs/profile_dark.gif" width="300"/>|<img src="PreviewGIFs/Catalog-Dark-Russian.gif" width="300"/>|<img src="PreviewGIFs/screencast_cart_dark.gif" width="300"/>|<img src="PreviewGIFs/screencast_statistic_dark.gif" width="300"/>|
+|<img src="PreviewGIFs/profile_dark.gif" width="200"/>|<img src="PreviewGIFs/Catalog-Dark-Russian.gif" width="200"/>|<img src="PreviewGIFs/screencast_cart_dark.gif" width="200"/>|<img src="PreviewGIFs/screencast_statistic_dark.gif" width="200"/>|
 
 ##  Project Structure
 
