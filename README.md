@@ -13,7 +13,7 @@ An app for searching and purchasing fake nfts.
 ## Tech Stack
 - **Language:** Swift
 - **Architecture:** MVVM
-- **Frameworks:** SwiftUI, SwiftData, Kingfisher, ProgressHUD
+- **Frameworks & Libraries:** SwiftUI, SwiftData, Kingfisher, ProgressHUD
 - **Tools:** SPM, Tuist, SwiftLint
 
 ## Installation
