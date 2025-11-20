@@ -18,7 +18,7 @@ An app for searching and purchasing fake nfts.
 
 ## Installation
 ```bash
-git clone https://github.com/BVladimir01/FakeNFT
+git clone https://github.com/BVladimir01/FakeNFT.git
 cd FakeNFT
 tuist generate
 open FakeNFT.xcodeproj
