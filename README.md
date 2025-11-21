@@ -21,7 +21,7 @@ An app for searching and purchasing fake nfts.
 git clone https://github.com/BVladimir01/FakeNFT.git
 cd FakeNFT
 tuist generate
-open FakeNFT.xcodeproj
+open iOS-FakeNFT-Extended.xcworkspace
 ```
 
 ### Requirements
